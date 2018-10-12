@@ -104,16 +104,18 @@ def train(images, measurements, reset_model=True):
     
     if(reset_model): # Create and train model from scratch
         model = Sequential()
-        #model.add(Flatten(input_shape=(160,320,3)))
+        # Crop the input image to filter out irrelevant parts such as the sky
+        # and off-road portions on the sides...
         model.add(Cropping2D(cropping=((75,10),(10,10)), input_shape=(160,320,3)))
-        #model.add(Lambda(lambda x: K.tf.image.rgb_to_grayscale(x)))
+        
+        # Normalize image with zero mean...
         model.add(Lambda(lambda x: (x/255.0)-0.5))
         
-        # Lenet architecture...
-        model.add(Conv2D(6, (5,5), activation='relu', strides=1, padding='valid'))#, input_shape=(160,320,1))) # old depth: 6
+        # Implement Lenet architecture...
+        model.add(Conv2D(6, (5,5), activation='relu', strides=1, padding='valid'))
         model.add(MaxPooling2D(pool_size=(2,2), padding='valid'))
         model.add(Dropout(0.2))
-        model.add(Conv2D(16, (5,5), activation='relu', strides=1, padding='valid')) #old depth: 14
+        model.add(Conv2D(16, (5,5), activation='relu', strides=1, padding='valid'))
         model.add(MaxPooling2D(pool_size=(2,2), padding='valid'))
         model.add(Dropout(0.2))
         model.add(Flatten())
@@ -129,9 +131,16 @@ def train(images, measurements, reset_model=True):
         from keras.models import load_model
         model = load_model('model.h5')
     
+    # Use Mean Squared error as loss function since this is a regression problem
     model.compile(loss='mse', optimizer='adam')
+    
+    # Run a set of 5 epochs at a time, saving after each set so we can break 
+    # when loss seems to have been optimized
     for i in range(0,5):
+        # Using 80% data for training, 20% for validation...
         model.fit(X_train, y_train, validation_split = 0.2, shuffle=True, epochs=5)
+        
+        # Save the model
         model.save('model.h5')
 
 # Create and train a model from scratch, or start from a previously trained and saved model in h5 file.
