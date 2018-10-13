@@ -121,3 +121,7 @@ Model architecture characteristics and details have been provided above.
 #### 3. Creation of the Training dataset and process
 Training dataset and process have been discussed above.
 
+
+### Simulation
+
+Here is a video output of the car driving autonomously on track 1. [Simulation Video][run2.mp4]
