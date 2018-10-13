@@ -14,13 +14,14 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image1]: ./Lenet.png "Model Visualization"
+[image2]: ./image1.jpg "Training Image"
+[image3]: ./image2.jpg "Training Image"
+[image4]: ./image3.jpg "Training Image"
+[image5]: ./image4.jpg "Training Image"
+[image6]: ./image5.jpg "Training Image"
+[image7]: ./image6.jpg "Training Image"
+[image8]: ./image7.jpg "Training Image"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -50,13 +51,13 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model uses the Lenet architecture (model.py lines 115-128).
-
-The input images are cropped using a Keras cropping layer (code line 109), and the data is normalized using a Keras lambda layer (code line 112).
-
 I first started off with a single layer fully connected network, with the goal being to get the pipeline working end-to-end.
 
-Once the pipeline was working, I used the Lenet architecture - since I had some experience with it in the traffic sign classifier project. It is deep, but light enough to be able to run in good time on my local machine with quad cores.
+Once the pipeline was working, I used the Lenet architecture (model.py lines 118-129) - since I had some experience with it in the traffic sign classifier project. It is deep, but light enough to be able to run in good time on my local machine with quad cores. The following image shows the architecture of Lenet:
+
+![alt text][image1]
+
+The original Lenet architecture takes in a 32x32 image. For this project, I replaced the input layer to match the image resolution of 160x320x3. The input images are cropped using a Keras cropping layer (code line 112), and the data is normalized using a Keras lambda layer (code line 115). Finally the output layer was replaced with 1 node since this is a regression problem and we want steering angle as the output. The adam optimizer was used along with mean-squared error as the loss function to minimize.
 
 I also tried more complex networks, first by just experimenting with higher number of channels in the convolution layers and a denser fully connected layer, then trying the NVIDIA network as well. But I didn't see a significant improvement over Lenet.
 
@@ -68,7 +69,7 @@ At the end of the process, the vehicle is able to drive autonomously around the 
 
 #### 2. Attempts to reduce overfitting in the model
 
-I added dropout layers in order to reduce overfitting (model.py lines 115-128). I experimented with higher and lower dropout rates, and finally settled on 20% dropout after each pooling and fully connected layer of Lenet (later, I was able to get a slightly better performance by limiting dropout to only the dense layers, but the submission doesn't use that).
+I added dropout layers in order to reduce overfitting (model.py lines 124-128). I experimented with higher and lower dropout rates, and finally settled on 20% dropout after first two fully connected layers of Lenet, and a 10% dropout after the last fully connected layer.
 
 The model used 80/20 train-validate split to ensure that the model did not overfit (model.py line 141). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
@@ -106,16 +107,17 @@ Here are some samples of my training data:
 
 ![alt text][image6]
 ![alt text][image7]
+![alt text][image8]
 
 
 ### Architecture and Training Documentation
 
 #### 1. Solution Design
-The approach taken for deriving and designing a model architecture has been discussed above
+The approach taken for deriving and designing a model architecture has been discussed above.
 
 #### 2. Model Architecture
 Model architecture characteristics and details have been provided above.
 
-#### 3. creation of the training dataset and training process
-Training dataset and process have been described above
+#### 3. Creation of the Training dataset and process
+Training dataset and process have been discussed above.
 
