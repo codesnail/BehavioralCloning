@@ -14,7 +14,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./Lenet.png "Model Visualization"
+[image1]: ./Lenet1.png "Model Visualization"
 [image2]: ./image1.jpg "Training Image"
 [image3]: ./image2.jpg "Training Image"
 [image4]: ./image3.jpg "Training Image"
@@ -80,19 +80,19 @@ The model used an adam optimizer, so the learning rate was not tuned manually (m
 #### 4. Appropriate training data
 
 Initially I recorded a couple of continuous driving laps using the arrow keys. I split this data into 80/20 for training/validation. I used random shuffling and Adam optimizer. Although I got decent validation loss, the car in autonomous mode kept veering off road at different points. Then I took a different approach. What I did was stopped the car at various points on the track, specifically set an appropriate steering angle with mouse for that location and pose of the car on the track, and recorded a quick shot of the pose by starting and stopping recording immediately. I took these snapshots in the middle of the road, as well as on the side lanes (to train for recovery). In some places, I drove the car at a very low speed and recorded a short window. I did this while driving straight in the center, as well as during recovery from side lines. I recorded about 3000 center camera images in this fashion. The model trained on it had even lower validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
-
+```
 Train on 2972 samples, validate on 744 samples
 Epoch 1/2
 2972/2972 [==============================] - 132s 44ms/step - loss: 0.0613 - val_loss: 0.0713
 Epoch 2/2
 2972/2972 [==============================] - 122s 41ms/step - loss: 0.0095 - val_loss: 0.0410
-
+```
 There were a couple of instances of going off-road, but that was corrected by recording specific poses for those spots, and training the previously saved model for one more epoch with the added training data. The validation loss went further down:
-
+```
 Train on 2972 samples, validate on 744 samples
 Epoch 1/1
 2972/2972 [==============================] - 130s 44ms/step - loss: 0.0042 - val_loss: 0.0318
-
+```
 This finally produced a model that did a complete lap on track 1 without going off-road.
 
 Here are some samples of my training data:
@@ -121,3 +121,7 @@ Model architecture characteristics and details have been provided above.
 #### 3. Creation of the Training dataset and process
 Training dataset and process have been discussed above.
 
+
+### Simulation
+
+Here is a video output of the car driving autonomously on track 1. [Simulation Video](./run2.mp4)
