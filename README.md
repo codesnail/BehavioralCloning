@@ -124,4 +124,4 @@ Training dataset and process have been discussed above.
 
 ### Simulation
 
-Here is a video output of the car driving autonomously on track 1. [Simulation Video][run2.mp4]
+Here is a video output of the car driving autonomously on track 1. [Simulation Video](./run2.mp4)
