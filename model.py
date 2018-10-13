@@ -45,12 +45,15 @@ def loadExtras():
     return np.array(images), np.array(measurements)
 
 def loadImages():
+    '''
+    Load training data
+    '''
+    
     lines = []
     #folder = 'C:\\Users\\ahmed\\OneDrive\\CarND\\behavioral_cloning\\'
     #folder = 'C:/Users/ahmed/OneDrive/CarND/spyderws/BehavioralCloning/'
     
-    # Credit for the initial training set to ericlavigne, on slack channel...
-    folder = 'C:\\Yaser\\Udacity\\CarND-Term1\\BehavioralCloning\\ericlavigne-data\\'
+    folder = 'C:\\Yaser\\Udacity\\CarND-Term1\\BehavioralCloning\\data\\'
     
     #with open('C:\\Users\\ahmed\\OneDrive\\CarND\\behavioral_cloning\\driving_log.csv') as csvFile:
     with open(folder + 'driving_log.csv') as csvFile:
@@ -62,8 +65,8 @@ def loadImages():
     measurements = []
     for csv_line in lines:
         source_path = csv_line[0]
-        #filename = source_path.split('\\')[-1]
-        filename = source_path.split('/')[-1]
+        filename = source_path.split('\\')[-1]
+        #filename = source_path.split('/')[-1]
         filename = folder + 'IMG\\' + filename
         img = mpimg.imread(filename) #/255.
         images.append(img)
@@ -83,10 +86,10 @@ def loadImages():
     
     # Add additional training data for the parts of track on which the car was
     # failing with the above data set
-    images2, measurements2 = loadExtras()
+    #images2, measurements2 = loadExtras()
     
-    images = np.concatenate((images, images2))
-    measurements = np.concatenate((measurements, measurements2))
+    #images = np.concatenate((images, images2))
+    #measurements = np.concatenate((measurements, measurements2))
     
     return images, measurements
 
@@ -114,17 +117,15 @@ def train(images, measurements, reset_model=True):
         # Implement Lenet architecture...
         model.add(Conv2D(6, (5,5), activation='relu', strides=1, padding='valid'))
         model.add(MaxPooling2D(pool_size=(2,2), padding='valid'))
-        model.add(Dropout(0.2))
         model.add(Conv2D(16, (5,5), activation='relu', strides=1, padding='valid'))
         model.add(MaxPooling2D(pool_size=(2,2), padding='valid'))
-        model.add(Dropout(0.2))
         model.add(Flatten())
         model.add(Dense(400, activation='relu'))
         model.add(Dropout(0.2))
         model.add(Dense(128, activation='relu'))
         model.add(Dropout(0.2))
         model.add(Dense(84, activation='relu')) #64
-        model.add(Dropout(0.2))
+        model.add(Dropout(0.1))
         model.add(Dense(1))
         
     else: # Load a previously trained saved model
@@ -134,11 +135,11 @@ def train(images, measurements, reset_model=True):
     # Use Mean Squared error as loss function since this is a regression problem
     model.compile(loss='mse', optimizer='adam')
     
-    # Run a set of 5 epochs at a time, saving after each set so we can break 
-    # when loss seems to have been optimized
-    for i in range(0,5):
+    # Save the model after every couple of epochs so we have multiple checkpoints
+    # in a long run. We can also terminate early if loss has been optimized
+    for i in range(0,1):
         # Using 80% data for training, 20% for validation...
-        model.fit(X_train, y_train, validation_split = 0.2, shuffle=True, epochs=5)
+        model.fit(X_train, y_train, validation_split = 0.2, shuffle=True, epochs=2)
         
         # Save the model
         model.save('model.h5')
