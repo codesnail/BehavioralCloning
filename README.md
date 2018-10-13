@@ -14,7 +14,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./Lenet.png "Model Visualization"
+[image1]: ./Lenet1.png "Model Visualization"
 [image2]: ./image1.jpg "Training Image"
 [image3]: ./image2.jpg "Training Image"
 [image4]: ./image3.jpg "Training Image"
