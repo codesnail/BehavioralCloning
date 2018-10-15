@@ -84,7 +84,7 @@ Initially I recorded a couple of continuous driving laps using the arrow keys. I
 
 ![alt text][image1.5]
 
-The model trained on it had even lower validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
+The data still has many more straight (zero steering angle) and slight left steering. That's because the track is mostly left or straight. Nevertheless, it is normally distributed around that mean. The model trained on it had even lower validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
 ```
 Train on 2972 samples, validate on 744 samples
 Epoch 1/2
