@@ -92,13 +92,9 @@ This finally produced a model that did a complete lap on track 1 without going o
 Here are some samples of my training data:
 
 ![alt text][image2]
-
-
 ![alt text][image3]
 ![alt text][image4]
 ![alt text][image5]
-
-
 ![alt text][image6]
 ![alt text][image7]
 ![alt text][image8]
