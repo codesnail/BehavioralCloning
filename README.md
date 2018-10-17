@@ -89,7 +89,7 @@ Epoch 1/1
 ```
 This finally produced a model that did a complete lap on track 1 without going off-road.
 
-Here are some samples of my training data:
+Here are some sample images from my training set:
 
 ![alt text][image2]
 ![alt text][image3]
