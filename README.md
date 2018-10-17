@@ -2,9 +2,9 @@
 
 ---
 
-The goal of this project is to train a deep learning model to keep the lane based on demonstrated driving behavior (steering angles) and a video stream of road as seen from a camera mounted on a car.
+The goal of this project is to train a deep learning model to keep a car in the lane, based on demonstrated driving behavior (steering angles) and a video stream of the road as seen from a camera mounted on the car.
 
-In summary, the following steps will be performed as part of implementing this project:
+The pipeline consists of the following steps:
 * Use the Udacity simulator to collect data of good driving behavior
 * Build a Convolutional Neural Network (CNN) in Keras that predicts steering angles from images
 * Train and validate the model with a training and validation set
