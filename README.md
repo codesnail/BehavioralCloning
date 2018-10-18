@@ -75,7 +75,7 @@ This is followed by a max pooling layer that uses a 2x2 kernel, default stride o
 | RELU                  |                                               |
 | Fully connected       | output 84                                     |
 | RELU                  |                                               |
-| Fully connected       | output 43                                     |
+| Fully connected       | output 1                                      |
 |					              |						                                    |
 
 The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
