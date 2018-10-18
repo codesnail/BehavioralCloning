@@ -39,15 +39,17 @@ Using the Udacity provided simulator, drive.py and my model file model.h5, the c
 python drive.py model.h5
 ```
 
-### Model Architecture and Training Strategy
-
-#### 1. Model Architecture
+### Architecture
 
 To setup a skeleton pipeline, and quickly make sure everything is working end-to-end, I first started off with a single layer fully connected network. Once the pipeline was working, I replaced the single fully connected layer with the Lenet architecture (model.py lines 118-129) - since I had some experience with it in the traffic sign classifier project. It is deep, but light enough to be able to run in good time on my local machine with quad cores. The following figure shows the architecture of Lenet:
 
 ![alt text][image1]
 
-The original Lenet architecture takes in a 32x32 image. For this project, I replaced the input layer with a 160x320x3 layer to match the input image resolutions. The input images are cropped using a Keras cropping layer (code line 112), and the data is normalized using a Keras lambda layer (code line 115). Finally the original Lenet output layer is 26, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output. The loss function used was mean-squared error, whereas the Adam Optimizer was used to minimize it, which avoids the need to explicitly tune a learning rate.
+#### Layers
+The original Lenet architecture takes in a 32x32 image. For this project, I replaced the input layer with a 160x320x3 layer to match the input image resolutions. The input images are cropped using a Keras cropping layer (code line 112), and the data is normalized using a Keras lambda layer (code line 115). The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses a 5x5 kernel, stride of 1, valid padding and a relu activation to introduce non-linearity. This produces 6 channels of output of 28x28 pixels. This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This is followed by another pair of conv2D and maxpool layer, with The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
+
+#### Error Function
+The loss function used was mean-squared error, whereas the Adam Optimizer was used to minimize it, which avoids the need to explicitly tune a learning rate.
 
 I also tried more complex networks, first by just experimenting with higher number of channels in the convolution layers and a denser fully connected layer, then trying the NVIDIA network as well. But I didn't see a significant improvement over Lenet.
 
@@ -67,7 +69,7 @@ The model used 80/20 train-validate split to ensure that the model did not overf
 
 The model used the Adam Optimizer, so the learning rate was not tuned manually (model.py line 141).
 
-#### 4. Collecting Training Data
+### 4. Training Strategy
 
 Initially I recorded a couple of continuous driving laps using the arrow keys. I split this data into 80/20 for training/validation. I used random shuffling. Although I got decent validation loss, the car in autonomous mode kept veering off road at different points. Then I took a different approach. What I did was stopped the car at various points on the track, specifically set an appropriate steering angle with mouse for that location and pose of the car on the track, and recorded a quick shot of the pose by starting and stopping recording immediately. Little issues like using keyboard vs mouse control was important for this training data, because each behaves differently enough to make a difference in recording the correct training labels. I took these snapshots in the middle of the road, as well as on the side lanes (to train for recovery). In some places, I drove the car at a very low speed and recorded a short window. I did this while driving straight in the center, as well as during recovery from side lines. I recorded about 3000 center camera images in this fashion. Then I further augmented this data set using horizontal reflection to balance turning angles, as the track is mostly turning left. Here is a histogram showing the final distribution of steering angles in the training data:
 
