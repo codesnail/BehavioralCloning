@@ -46,15 +46,15 @@ To setup a skeleton pipeline, and quickly make sure everything is working end-to
 ![alt text][image1]
 
 #### Layers Specification
-The original Lenet architecture takes in a 32x32 grayscale image. For this project, I replaced the input layer with a 160x320x3 layer to match the input image resolutions. An alternate was to resize all input images to 32x32 and conver to grayscale (which I have done successfully in the past for traffic sign classification), but I thought we will need more details for this problem and I didn't want to lose important information. However, the input images are cropped using a Keras Cropping layer (code line 112) to filter out parts of the image that don't impact steering decision (e.g. the sky, and in this specific case parts of left and right edges, as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). The data is then normalized using a Keras lambda layer (code line 115). The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses 6 channels, a 5x5 kernel, stride of 1, no padding and a relu activation to introduce non-linearity. We can calculate the output dimensions of this layer as follows:
+The original Lenet architecture takes in a 32x32 grayscale image. For this project, I replaced the input layer with a 160x320x3 layer to match the input image resolutions. An alternate was to resize all input images to 32x32 (which I have done successfully in the past for traffic sign classification), but I thought we will need more details for this problem and I didn't want to lose important information. However, the input images are cropped using a Keras Cropping layer (code line 112) to filter out parts of the image that don't impact steering decision (e.g. the sky, and in this specific case parts of left and right edges, as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). This gives us a 75x300x3 image. The data is then normalized using a Keras lambda layer (code line 115). The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses 6 channels, a 5x5 kernel, stride of 1, no padding and a relu activation to introduce non-linearity. We can calculate the output dimensions of this layer as follows:
 
 ```
 Output Dimensions = ( (input_dims - kernel_size + 2 * padding) / stride ) + 1
-Output Dim 1 =   ( (160 - 5 + 2 * 0) / 1 ) + 1 = 156
-Output Dim 2 =   ( (320 -5 + 2 * 0) / 1 ) + 1 = 316
+Output Dim 1 =   ( (75 - 5 + 2 * 0) / 1 ) + 1 = 71
+Output Dim 2 =   ( (300 - 5 + 2 * 0) / 1 ) + 1 = 296
 ```
 
-The third dimension is what we chose for the Conv2D layer, in this case 6. So the output of this first Conv2D layer will be 156x316x6.
+The third dimension is what we chose for the Conv2D layer, in this case 6. So the output of this first Conv2D layer will be 71x296x6.
 
 If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this (and much more) is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
 
@@ -63,13 +63,15 @@ This is followed by a max pooling layer that uses a 2x2 kernel, default stride o
 | Layer         		    |     Description	        			              	| 
 |:---------------------:|:---------------------------------------------:| 
 | Input         		    | 160x320x3 RGB image   							          | 
-| Convolution 5x5x6     | 1x1 stride, no padding, outputs 156x316x3   	|
+| Cropping         		  | output 75x300x3 image        							    |
+| Normalize         		| output 75x300x3       							          |
+| Convolution 5x5x6     | 1x1 stride, no padding, outputs 71x296x6     	|
 | RELU					        |	Induce non-linearity   	                      |
-| Max pooling	      	  | 2x2 stride,  outputs 78x158x6  	              |
-| Convolution 5x5x1     | 1x1 stride, no padding, outputs 74x154x16   	|
+| Max pooling	      	  | 2x2 stride,  outputs 35x148x6  	              |
+| Convolution 5x5x1     | 1x1 stride, no padding, outputs 31x144x16   	|
 | RELU					        |									      	                     	|
-| Max pooling	      	  | 2x2 stride,  outputs 37x77x16  	            	|
-| Fully connected		    | Input=400, output 120		                     	|
+| Max pooling	      	  | 2x2 stride,  outputs 15x72x16  	            	|
+| Fully connected		    | Input=17280, output 120		                   	|
 | RELU                  |                                               |
 | Fully connected       | output 84                                     |
 | RELU                  |                                               |
