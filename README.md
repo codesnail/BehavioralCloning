@@ -58,25 +58,26 @@ The third dimension is what we chose for the Conv2D layer, in this case 6. So th
 
 If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this (and much more) is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
 
-This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This compacts the output dimensions to half (but not the number of channels), producing an output of 78x158x6. This is followed by another pair of convolution and max pooling, and then 3 fully connected layers of 400, 128 and 84 respectively. I added the additional layer of 400 nodes because I'm using higher resolution images, and as I said above I didn't want to lose important information. Reducing the number of nodes to 120 suddenly may cause just that. The following table summarizes all the layers comprehensively:
+This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This compacts the output dimensions to half (but not the number of channels), producing an output of 78x158x6. This is followed by another pair of convolution and max pooling, and then 3 fully connected layers of 400, 128 and 84 respectively. I added an additional layer of 400 nodes because I'm using higher resolution images, and as I said above I didn't want to lose important information. Reducing the number of nodes to 120 suddenly may cause important information to be lost. The following table summarizes all the layers comprehensively:
 
-| Layer         		    |     Description	        			              	| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		    | 160x320x3 RGB image   							          | 
-| Cropping         		  | output 75x300x3 image        							    |
-| Normalize         		| output 75x300x3       							          |
-| Convolution 5x5x6     | 1x1 stride, no padding, outputs 71x296x6     	|
-| RELU					        |	Induce non-linearity   	                      |
-| Max pooling	      	  | 2x2 stride,  outputs 35x148x6  	              |
-| Convolution 5x5x1     | 1x1 stride, no padding, outputs 31x144x16   	|
-| RELU					        |	Induce non-linearity 			                   	|
-| Max pooling	      	  | 2x2 stride,  outputs 15x72x16  	            	|
-| Fully connected		    | Input=17280, output 400		                   	|
-| RELU                  | Induce non-linearity                                              |
-| Fully connected       | Input 400, output 120                                     |
-| RELU                  | Induce non-linearity                                               |
-| Fully connected       | output 1                                      |
-|					              |						                                    |
+| Layer         		    |     Description	        			              	|  Number of weights |
+|:---------------------:|:---------------------------------------------:|:------------------:|
+| Input         		    | 160x320x3 RGB image   							          |                    |
+| Cropping         		  | output 75x300x3 image        							    |                    |
+| Normalize         		| output 75x300x3       							          |                    |
+| Convolution 5x5x6     | 1x1 stride, no padding, outputs 71x296x6     	|  126k              |
+| RELU					        |	Induce non-linearity   	                      |                    |
+| Max pooling	      	  | 2x2 stride,  outputs 35x148x6  	              |                    |
+| Convolution 5x5x1     | 1x1 stride, no padding, outputs 31x144x16   	|  71.4k             |
+| RELU					        |	Induce non-linearity 			                   	|                    |
+| Max pooling	      	  | 2x2 stride,  outputs 15x72x16  	            	|                    |
+| Fully connected		    | Input=17280, output 400		                   	|  6.9M              |
+| RELU                  | Induce non-linearity                          |                    |
+| Fully connected       | Input 400, output 120                         |  80k               |
+| RELU                  | Induce non-linearity                          |                    |
+| Fully connected       | Input 120, output 84                          |  10k               |
+|	Relu  	              |	Induce non-linearity                          |                    |
+| Fully connected       | Input 84, output 1                            |  84                |
 
 The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
 
