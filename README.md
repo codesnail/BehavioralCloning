@@ -69,12 +69,12 @@ This is followed by a max pooling layer that uses a 2x2 kernel, default stride o
 | RELU					        |	Induce non-linearity   	                      |
 | Max pooling	      	  | 2x2 stride,  outputs 35x148x6  	              |
 | Convolution 5x5x1     | 1x1 stride, no padding, outputs 31x144x16   	|
-| RELU					        |									      	                     	|
+| RELU					        |	Induce non-linearity 			                   	|
 | Max pooling	      	  | 2x2 stride,  outputs 15x72x16  	            	|
-| Fully connected		    | Input=17280, output 120		                   	|
-| RELU                  |                                               |
-| Fully connected       | output 84                                     |
-| RELU                  |                                               |
+| Fully connected		    | Input=17280, output 400		                   	|
+| RELU                  | Induce non-linearity                                              |
+| Fully connected       | Input 400, output 120                                     |
+| RELU                  | Induce non-linearity                                               |
 | Fully connected       | output 1                                      |
 |					              |						                                    |
 
