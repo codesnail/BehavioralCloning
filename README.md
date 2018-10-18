@@ -60,15 +60,15 @@ If we were using TensorFlow directly, we would need this calculation to create p
 
 This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This compacts the output dimensions to half (but not the number of channels), producing an output of 78x158x6. This is followed by another pair of convolution and max pooling, and then 3 fully connected layers of 400, 128 and 84 respectively. I added the additional layer of 400 nodes because I'm using higher resolution images, and as I said above I didn't want to lose important information. Reducing the number of nodes to 120 suddenly may cause just that. The following table summarizes all the layers comprehensively:
 
-| Layer         		    |     Description	        			             	| 
+| Layer         		    |     Description	        			              	| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		    | 160x320x3 RGB image   							        | 
-| Convolution 5x5x6     | 1x1 stride, no padding, outputs 28x28x6      	|
-| RELU					        |									      	                      |
-| Max pooling	      	  | 2x2 stride,  outputs 14x14x6  	              |
-| Convolution 5x5x1     | 1x1 stride, no padding, outputs 10x10x16   		|
+| Input         		    | 160x320x3 RGB image   							          | 
+| Convolution 5x5x6     | 1x1 stride, no padding, outputs 156x316x3   	|
+| RELU					        |	Induce non-linearity   	                      |
+| Max pooling	      	  | 2x2 stride,  outputs 78x158x6  	              |
+| Convolution 5x5x1     | 1x1 stride, no padding, outputs 74x154x16   	|
 | RELU					        |									      	                     	|
-| Max pooling	      	  | 2x2 stride,  outputs 5x5x16   	            	|
+| Max pooling	      	  | 2x2 stride,  outputs 37x77x16  	            	|
 | Fully connected		    | Input=400, output 120		                     	|
 | RELU                  |                                               |
 | Fully connected       | output 84                                     |
