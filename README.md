@@ -54,9 +54,16 @@ Output Dim 1 =   ( (160 - 5 + 2 * 0) / 1 ) + 1 = 156
 Output Dim 2 =   ( (320 -5 + 2 * 0) / 1 ) + 1 = 316
 ```
 
-The third dimension is what we chose for the Conv2D layer, in this case 6. So the output of this first Conv2D layer will be 156x316x6. If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this (and much more) is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
+The third dimension is what we chose for the Conv2D layer, in this case 6. So the output of this first Conv2D layer will be 156x316x6.
 
-This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This is followed by another pair of conv2D (16 channels) and maxpool layer. 
+If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this (and much more) is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
+
+This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This compacts the output dimensions to half (but not the number of channels), producing an output of 78x158x6. This is followed by another pair of convolution and max pooling, and then 3 fully connected layers of 400, 128 and 84 respectively. I added the additional layer of 400 nodes because I'm using higher resolution images, and as I said above I didn't want to lose important information. Reducing the number of nodes to 120 suddenly may cause just that. The following table summarizes all the layers comprehensively:
+
+|------------|-----------|
+| layer 1    |           |
+| layer 2    |           |
+|------------|-----------|
 
 The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
 
