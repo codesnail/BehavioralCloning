@@ -45,8 +45,18 @@ To setup a skeleton pipeline, and quickly make sure everything is working end-to
 
 ![alt text][image1]
 
-#### Layer Design
-The original Lenet architecture takes in a 32x32 grayscale image. For this project, I replaced the input layer with a 160x320x3 layer to match the input image resolutions. An alternate was to resize all input images to 32x32 and conver to grayscale (which I have done successfully in the past for traffic sign classification), but I thought we will need more details for this problem and I didn't want to lose important information. However, the input images are cropped using a Keras Cropping layer (code line 112) to filter out parts of the image that don't impact steering decision (e.g. the sky, and in this specific case parts of left and right edges, as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). The data is then normalized using a Keras lambda layer (code line 115). The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses a 5x5 kernel, stride of 1, valid padding and a relu activation to introduce non-linearity. This produces 6 channels of output of 28x28 pixels. This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This is followed by another pair of conv2D and maxpool layer, with The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
+#### Layers Specification
+The original Lenet architecture takes in a 32x32 grayscale image. For this project, I replaced the input layer with a 160x320x3 layer to match the input image resolutions. An alternate was to resize all input images to 32x32 and conver to grayscale (which I have done successfully in the past for traffic sign classification), but I thought we will need more details for this problem and I didn't want to lose important information. However, the input images are cropped using a Keras Cropping layer (code line 112) to filter out parts of the image that don't impact steering decision (e.g. the sky, and in this specific case parts of left and right edges, as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). The data is then normalized using a Keras lambda layer (code line 115). The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses 6 channels, a 5x5 kernel, stride of 1, no padding and a relu activation to introduce non-linearity. We can calculate the output dimensions of this layer as follows:
+
+Output Dimensions = ( (input_dims - kernel_size + 2 * padding) / stride ) + 1
+Output Dim 1 =   ( (160 - 5 + 2 * 0) / 1 ) + 1 = 156
+Output Dim 2 =   ( (320 -5 + 2 * 0) / 1 ) + 1 = 316
+
+The third dimension is what we chose for the Conv2D layer, in this case 6. So the output of this first Conv2D layer will be 156x316x6. If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this (and much more) is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
+
+This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This is followed by another pair of conv2D (16 channels) and maxpool layer. 
+
+The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
 
 #### Error Function
 The loss function used was mean-squared error, whereas the Adam Optimizer was used to minimize it, which avoids the need to explicitly tune a learning rate.
