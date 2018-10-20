@@ -22,6 +22,7 @@ The pipeline consists of the following steps:
 [image6]: ./image5.jpg "Training Image"
 [image7]: ./image6.jpg "Training Image"
 [image8]: ./image7.jpg "Training Image"
+[image9]: ./performance.png "Performance"
 
 ---
 #### Files Submitted
@@ -138,3 +139,9 @@ Here are some sample images from my training set:
 ### Simulation
 
 Here is a video output of the car driving autonomously on track 1. [Simulation Video](./run2.mp4)
+
+### Performance
+
+The figure below shows the performance of the deep learning network over varying size of training set
+
+![alt_text][image9]
