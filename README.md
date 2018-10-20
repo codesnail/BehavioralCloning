@@ -142,6 +142,13 @@ Here is a video output of the car driving autonomously on track 1. [Simulation V
 
 ### Performance
 
-The figure below shows the performance of the deep learning network over varying size of training set
+The project was run on Dell quad-core machine with 8GB RAM. The figure below shows the performance of the deep learning network over varying sizes of training set:
 
 ![alt_text][image9]
+
+It can be seen that the growth is linear, so big O for this network is O(n). For every 500 samples, it takes the network about 10 secs to train. The average image size in the training data set is 14kb, so 500 samples would make 7MB. The full dataset of 3500 will make the size 49MB. We can also calculate the expected training time for various sizes of data. At 7MB per 10 secs, we can calculate:
+
+1. 1 GB = 146 * 7MB = 146 * 10 secs = 1460 secs = 24 mins
+2. 10 GB = 240 mins = 4 hrs
+3. 100 GB = 40 hrs
+4. 1 TB = 1024 GB = 24567 mins = 409 hrs = 17 days
