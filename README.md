@@ -154,6 +154,16 @@ It can be seen that the growth is linear, so Big O for this network is O(n). For
 3. 100 GB = 40 hrs
 4. 1 TB = 17 days
 
+#### Performance Impact of Removing or adding layers
+
+In this experiment, I note the runtime performance by removing the fully connected layer only, then again by removing the convolutional layer only.
+
+| Layer         		                   | Runtime (per 500 samples) |
+|:------------------------------------:|:-------------------------:|
+| Lenet + 400 fully connected layer    | 1.36 sec                  |
+| Base Lenet (remove layer of 400)     | 1.33 sec                  |
+| Remove 1st convolutional layer       |                           |
+
 #### Performance Impact of Data Quality
 
 This may not be so obvious, but in running the same architecture with different data sizes, there can be a difference in runtime. This could be due to variation in the optimizing of weights from one data set to another.
