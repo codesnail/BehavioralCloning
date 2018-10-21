@@ -158,11 +158,13 @@ It can be seen that the growth is linear, so Big O for this network is O(n). For
 
 In this experiment, I note the runtime performance by removing the fully connected layer only, then again by removing the convolutional layer only.
 
-| Layer         		                   | Runtime (per 500 samples) |
-|:------------------------------------:|:-------------------------:|
-| Lenet + 400 fully connected layer    | 1.36 sec                  |
-| Base Lenet (remove layer of 400)     | 1.33 sec                  |
-| Remove 1st convolutional layer       |                           |
+| Layer         		                                 | Runtime (per 500 samples) |
+|:--------------------------------------------------:|:-------------------------:|
+| Lenet + 400 fully connected layer                  | 1.36 sec                  |
+| Base Lenet (remove layer of 400)                   | 1.33 sec                  |
+| Remove 1st convolutional (and pooling) layer       | 1.94 sec                  |
+
+Although the fully connected layer introduces many more weights, it has a lower impact on the runtime performance of the architecture. Interestingly, the removal of the 1st convolutional layer of 6 channels has a bigger impact on performance. Firsly, it maybe a bit cryptic to see on the surface, but removal of a smaller layer of 6 channels means now we are directly connecting the input to a bigger channel of 16. So the total weights go from 71x296x6 = 126k to 71x296x*16* = 336k, which is more than the combined weights of the original 1st and second layer (126k + 71.4k = 197.4)
 
 #### Performance Impact of Data Quality
 
