@@ -79,6 +79,7 @@ This is followed by a max pooling layer that uses a 2x2 kernel, default stride o
 | Fully connected       | Input 120, output 84                          |  10k               |
 |	Relu  	              |	Induce non-linearity                          |                    |
 | Fully connected       | Input 84, output 1                            |  84                |
+| Total Weights         |                                               |  *7.19M*           |
 
 The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
 
@@ -146,9 +147,9 @@ The project was run on Dell quad-core machine with 8GB RAM. The figure below sho
 
 ![alt_text][image9]
 
-It can be seen that the growth is linear, so big O for this network is O(n). For every 500 samples, it takes the network about 10 secs to train. The average image size in the training data set is 14kb, so 500 samples would make 7MB. The full dataset of 3500 will make the size 49MB. We can also calculate the expected training time for various sizes of data. At 7MB per 10 secs, we can calculate:
+It can be seen that the growth is linear, so Big O for this network is O(n). For every 500 samples, it takes the network about 10 secs to train. The average image size in the training data set is 14kb, so 500 samples would make 7MB. This gives about 1.4s per MB. Based on this we can calculate the run time for various sizes of big data:
 
-1. 1 GB = 146 * 7MB = 146 * 10 secs = 1460 secs = 24 mins
-2. 10 GB = 240 mins = 4 hrs
+1. 1 GB = 24 mins
+2. 10 GB = 4 hrs
 3. 100 GB = 40 hrs
-4. 1 TB = 1024 GB = 24567 mins = 409 hrs = 17 days
+4. 1 TB = 17 days
