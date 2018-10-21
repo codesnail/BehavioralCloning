@@ -163,4 +163,4 @@ This may not be so obvious, but in running the same architecture with different 
 | Data Set 1         		| Better quality, accurate individual steering angles | 1.33 sec                  |
 | Data Set 2            | Lower quality, many more zero steering angles       | 1.27 sec                  |
 
-On big data size of 1 TB, this introduces a difference of about 6 days of training (21.8 vs 27.9 days).
+On big data size of 1 TB, this introduces a difference of about 0.7 days of training (16.1 vs 15.4 days). We could say that a difference of 1 day on this size of data should be expected due to optimization differences.
