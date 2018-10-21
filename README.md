@@ -153,3 +153,14 @@ It can be seen that the growth is linear, so Big O for this network is O(n). For
 2. 10 GB = 4 hrs
 3. 100 GB = 40 hrs
 4. 1 TB = 17 days
+
+#### Performance Impact of Data Quality
+
+This may not be so obvious, but in running the same architecture with different data sizes, there can be a difference in runtime. This could be due to variation in the optimizing of weights from one data set to another.
+
+| Data Set       		    |     Description	        			              	      | Runtime (per 500 samples) |
+|:---------------------:|:---------------------------------------------------:|:-------------------------:|
+| Data Set 1         		| Better quality, accurate individual steering angles | 1.33 sec                  |
+| Data Set 2            | Lower quality, many more zero steering angles       | 1.27 sec                  |
+
+On big data size of 1 TB, this introduces a difference of about 6 days of training (21.8 vs 27.9 days).
