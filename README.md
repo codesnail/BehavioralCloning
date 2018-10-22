@@ -176,3 +176,7 @@ This may not be so obvious, but in running the same architecture with different 
 | Data Set 2            | Lower quality, many more zero steering angles       | 1.27 sec                  |
 
 On big data size of 1 TB, this introduces a difference of about 0.7 days of training (16.1 vs 15.4 days). We could say that a difference of 1 day on this size of data should be expected due to optimization differences.
+
+#### Performance on GPU
+
+The average runtime on GPU was 0.12 sec per MB, compared to 1.4 sec per MB for quad-core. This is a 91.4% improvement in runtime! To understand the scale of difference on big data, with 1TB of data it will take 1.45 days on GPU vs 17 days on quad-core.
