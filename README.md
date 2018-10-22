@@ -179,4 +179,4 @@ On big data size of 1 TB, this introduces a difference of about 0.7 days of trai
 
 #### Performance on GPU
 
-The average runtime on GPU was 0.12 sec per MB, compared to 1.4 sec per MB for quad-core. This is a 91.4% improvement in runtime! To understand the scale of difference on big data, with 1TB of data it will take 1.45 days on GPU vs 17 days on quad-core.
+For this experiment, the g2.2xlarge instance was provisioned on AWS cloud, with 1 NVIDIA Kepler GK104 Grid GPU plus 8 vCPUs and 15 GB RAM. The average runtime on GPU was 0.12 sec per MB, compared to 1.4 sec per MB for quad-core. This is a 91.4% improvement in runtime! To understand the scale of difference on big data, with 1TB of data it will take 1.45 days on GPU vs 17 days on quad-core.
