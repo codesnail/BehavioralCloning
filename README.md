@@ -2,7 +2,7 @@
 
 ---
 
-The goal of this project is to train a deep learning model to keep a car in the lane, based on demonstrated driving behavior (steering angles) and a video stream of the road as seen from a camera mounted on the car.
+The goal of this project is to train a deep learning model to keep a car in the lane, based on a video stream of the road as seen from a camera mounted on the car, and demonstrated driving behavior (steering angles).
 
 The pipeline consists of the following steps:
 * Use the Udacity simulator to collect data of good driving behavior
@@ -14,7 +14,8 @@ The pipeline consists of the following steps:
 [//]: # (Image References)
 
 [image1]: ./Lenet1.png "Model Visualization"
-[image1.5]: ./steering_angles_hist.png "Distribution of Steering Angles"
+[image1.3]: ./unbalanced_steering_angles_hist.png "Distribution of steering angles before augmentation"
+[image1.5]: ./steering_angles_hist.png "Distribution of steering angles"
 [image2]: ./image1.jpg "Training Image"
 [image3]: ./image2.jpg "Training Image"
 [image4]: ./image3.jpg "Training Image"
@@ -39,6 +40,34 @@ Using the Udacity provided simulator, drive.py and my model file model.h5, the c
 ```sh
 python drive.py model.h5
 ```
+
+### Data Gathering and Exploration
+
+For this problem, we are ideally working on video frames captured from an actual camera mounted on a car. For this project however, data is collected using a simulator. It has two modes - a manual mode used for training, and an autonomous mode which you can use to test drive the car using your trained model. Following screenshots show what the simulator screen looks like.
+
+[Simulator screen shots]
+
+The training mode is like a video game in which you drive a car on a track, using the arrow keys on a keyboard or the mouse to control steering. Below is a video of the sample training run:
+
+[training_video.mp4]
+
+The simulator actually stores the video in the form of individual images it is comprised of. It also records the steering angle in a csv file, which is recorded against the corresponding fully qualified image file name. The file is called `driving_log.csv`, and below is a sample of this file after running the simulator in training mode.
+
+```
+C:\ahmed\CarND\behavioral_cloning\IMG\center_2018_07_30_19_54_48_078.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\left_2018_07_30_19_54_48_078.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\right_2018_07_30_19_54_48_078.jpg,0,0,0,9.254003E-07
+
+C:\ahmed\CarND\behavioral_cloning\IMG\center_2018_07_30_19_54_48_202.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\left_2018_07_30_19_54_48_202.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\right_2018_07_30_19_54_48_202.jpg,0,0,0,1.584464E-06
+
+C:\ahmed\CarND\behavioral_cloning\IMG\center_2018_07_30_19_54_48_324.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\left_2018_07_30_19_54_48_324.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\right_2018_07_30_19_54_48_324.jpg,0,0,0,4.65583E-06
+```
+
+We see that there are actually three images for each video frame - each corresponding to the center, left or right camera mounted on the (simulated) vehicle. The last number in the row is the recorded steering angle for that frame, and that will be used as our label and ground truth. The other 3 numbers before the steering angle include speed and a couple of other fields, but we are not interested in those for now (we will use a constant speed in autonomous mode for now).
+
+The first thing that stands out is that the steering angle is in much lower scale in the file compared to the simulator video. It turns out the video shows the angle in degrees, whereas driving_log.csv stores it in radians.
+
+Another thing I noted is that on training track 1, most of the curves are going left. This is reflected in the histogram of the steering angles from driving_log.csv:
+
+[unbalanced_steering_angles_hist.png]
 
 ### Architecture
 
