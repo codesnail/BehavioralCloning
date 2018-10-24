@@ -160,17 +160,11 @@ The loss function used is mean-squared error, whereas the Adam Optimizer was use
  model.compile(loss='mse', optimizer='adam')
 ```
 
-I also tried more complex networks, first by just experimenting with higher number of channels in the convolution layers and a denser fully connected layer, then trying the NVIDIA network as well. But I didn't see a significant improvement over Lenet.
-
-The initial training and validation loss was high. I re-ran my simulator for training data, trying to record better steering angles, and turning the recording on/off at appropriate times. This helped improve the training loss, but the validation loss was still high. So I introduced dropout layers. I started off with a high dropout rate of 0.5, but the validation loss was stuck at a high number through the epochs. I thought maybe I am dropping too many connections, so I lowered the rate. Experimenting this way, I got slightly better validation loss.
-
-I tried my model on the driving track throughout the process. It was consistently veering off the road quite often. And seemingly my recovery training effort was not working either. The main cause of problems, and the most time consuming part for me was a trivial thing - I was using cv2 to load images, which uses BGR format, and the Udacity provided drive.py used PIL (which uses the RGB format). Once I figured that out, it was a breeze from there.
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+I also tried more complex networks, first by just experimenting with higher number of channels in the convolution layers and a denser fully connected layer, then trying the [NVIDIA](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) network as well. But I didn't see a significant improvement over Lenet.
 
 #### 2. Handling Overfitting
 
-I added dropout layers in order to reduce overfitting (model.py lines 124-128). I experimented with higher and lower dropout rates, and finally settled on 20% dropout after first two fully connected layers of Lenet, and a 10% dropout after the last fully connected layer.
+Dropout layers were added in order to reduce overfitting. I experimented with higher and lower dropout rates, and finally settled on 20% dropout after first two fully connected layers of Lenet, and a 10% dropout after the last fully connected layer.
 
 The model used 80/20 train-validate split to ensure that the model did not overfit (model.py line 141). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
