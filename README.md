@@ -14,7 +14,7 @@ The pipeline consists of the following steps:
 [//]: # (Image References)
 
 [image1]: ./Lenet1.png "Model Visualization"
-[image1.3]: ./unbalanced_steering_angles_hist.png "Distribution of steering angles before augmentation"
+[image1.3]: ./unbalanced_steering_angles_hist.png "Initial distribution of steering angles"
 [image1.5]: ./steering_angles_hist.png "Distribution of steering angles"
 [image2]: ./image1.jpg "Training Image"
 [image3]: ./image2.jpg "Training Image"
@@ -41,7 +41,7 @@ Using the Udacity provided simulator, drive.py and my model file model.h5, the c
 python drive.py model.h5
 ```
 
-### Data Gathering and Exploration
+### Data Collection and Exploration
 
 For this problem, we are ideally working on video frames captured from an actual camera mounted on a car. For this project however, data is collected using a simulator. It has two modes - a manual mode used for training, and an autonomous mode which you can use to test drive the car using your trained model. Following screenshots show what the simulator screen looks like.
 
@@ -67,7 +67,9 @@ The first thing that stands out is that the steering angle is in much lower scal
 
 Another thing I noted is that on training track 1, most of the curves are going left. This is reflected in the histogram of the steering angles from driving_log.csv:
 
-[unbalanced_steering_angles_hist.png]
+![alt text][image1.3]
+
+There are a couple of strategies to account for this. A simple way is to augment the data by horizontally reflecting all images and labelling them with the negative of the corresponding steering angles. This was the approach I chose. Another approach we could do in the simulator is turn the car around on the track and record a video driving the opposite way. 
 
 ### Architecture
 
