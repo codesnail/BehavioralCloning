@@ -27,20 +27,6 @@ The pipeline consists of the following steps:
 [image9]: ./performance.png "Performance"
 
 ---
-#### Files Submitted
-
-The project includes the following files:
-* model.py containing the script to create and train the model
-* drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
-
-#### How to simulate 
-Using the Udacity provided simulator, drive.py and my model file model.h5, the car can be driven autonomously around the track by executing: 
-
-```sh
-python drive.py model.h5
-```
 
 ### Data Collection and Exploration
 
@@ -243,3 +229,19 @@ In this experiment, I note the runtime performance by removing the fully connect
 | Remove 1st convolutional (and pooling) layer       | 1.94 sec                  |
 
 Although the fully connected layer introduces many more weights, it has a lower impact on the runtime performance of the architecture. Interestingly, the removal of the 1st convolutional layer of 6 channels has a bigger impact on performance. Firsly, it maybe a bit cryptic to see on the surface, but removal of a smaller layer of 6 channels means now we are directly connecting the input to a bigger channel of 16. So the total weights go from 71x296x6 = 126k to 71x296x*16* = 336k, which is more than the combined weights of the original 1st and second layer (126k + 71.4k = 197.4). Secondly, although this introduces fewer weights than the fully connected layer, the back-prop and optimization in convolutional layers requires more processing than a single fully connected layer.
+
+
+#### Files Submitted
+
+The project includes the following files:
+* model.py containing the script to create and train the model
+* drive.py for driving the car in autonomous mode
+* model.h5 containing a trained convolution neural network 
+* writeup_report.md or writeup_report.pdf summarizing the results
+
+#### How to simulate 
+Using the Udacity provided simulator, drive.py and my model file model.h5, the car can be driven autonomously around the track by executing: 
+
+```sh
+python drive.py model.h5
+```
