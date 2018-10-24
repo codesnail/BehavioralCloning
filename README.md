@@ -13,6 +13,8 @@ The pipeline consists of the following steps:
 
 [//]: # (Image References)
 
+[image0.1]: ./sim1.PNG "Simulator"
+[image0.2]: ./sim2.PNG "Simulator"
 [image1]: ./Lenet1.png "Model Visualization"
 [image1.3]: ./unbalanced_steering_angles_hist.png "Initial distribution of steering angles"
 [image1.4]: ./balanced_steering_angles_hist_1.png "Augmented distribution of steering angles"
@@ -32,7 +34,8 @@ The pipeline consists of the following steps:
 
 For this problem, we are ideally working on video frames captured from an actual camera mounted on a car. For this project however, data is collected using a simulator. It has two modes - a manual mode used for training, and an autonomous mode which you can use to test drive the car using your trained model. Following screenshots show what the simulator screen looks like.
 
-[Simulator screen shots]
+![alt text][image0.1]
+![alt text][image0.2]
 
 The training mode is like a video game in which you drive a car on a track, using the arrow keys on a keyboard or the mouse to control steering. Below is a video of the sample training run:
 
