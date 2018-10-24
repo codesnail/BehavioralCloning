@@ -228,9 +228,13 @@ It can be seen that the growth is linear, so Big O for this network is O(n). For
 3. 100 GB = 40 hrs
 4. 1 TB = 17 days
 
+#### Performance on GPU
+
+For this experiment, the g2.2xlarge instance was provisioned on AWS cloud, with 1 NVIDIA Kepler GK104 Grid GPU plus 8 vCPUs and 15 GB RAM. The average runtime on GPU was 0.12 sec per MB, compared to 1.4 sec per MB for quad-core. This is a 91.4% improvement in runtime! To understand the scale of difference on big data, with 1TB of data it will take 1.45 days on GPU vs 17 days on quad-core.
+
 #### Performance Impact of Removing or adding layers
 
-In this experiment, I note the runtime performance by removing the fully connected layer only, then again by removing the convolutional layer only.
+In this experiment, I note the runtime performance by removing the fully connected layer only, then again by removing the convolutional layer only. This experiment was run on quad-core CPUs.
 
 | Layer         		                                 | Runtime (per 500 samples) |
 |:--------------------------------------------------:|:-------------------------:|
@@ -239,18 +243,3 @@ In this experiment, I note the runtime performance by removing the fully connect
 | Remove 1st convolutional (and pooling) layer       | 1.94 sec                  |
 
 Although the fully connected layer introduces many more weights, it has a lower impact on the runtime performance of the architecture. Interestingly, the removal of the 1st convolutional layer of 6 channels has a bigger impact on performance. Firsly, it maybe a bit cryptic to see on the surface, but removal of a smaller layer of 6 channels means now we are directly connecting the input to a bigger channel of 16. So the total weights go from 71x296x6 = 126k to 71x296x*16* = 336k, which is more than the combined weights of the original 1st and second layer (126k + 71.4k = 197.4). Secondly, although this introduces fewer weights than the fully connected layer, the back-prop and optimization in convultional layers requires more processing than a single fully connected layer.
-
-#### Performance Impact of Data Quality
-
-This may not be so obvious, but in running the same architecture with different data sizes, there can be a difference in runtime. This could be due to variation in the optimizing of weights from one data set to another.
-
-| Data Set       		    |     Description	        			              	      | Runtime (per 500 samples) |
-|:---------------------:|:---------------------------------------------------:|:-------------------------:|
-| Data Set 1         		| Better quality, accurate individual steering angles | 1.33 sec                  |
-| Data Set 2            | Lower quality, many more zero steering angles       | 1.27 sec                  |
-
-On big data size of 1 TB, this introduces a difference of about 0.7 days of training (16.1 vs 15.4 days). We could say that a difference of 1 day on this size of data should be expected due to optimization differences.
-
-#### Performance on GPU
-
-For this experiment, the g2.2xlarge instance was provisioned on AWS cloud, with 1 NVIDIA Kepler GK104 Grid GPU plus 8 vCPUs and 15 GB RAM. The average runtime on GPU was 0.12 sec per MB, compared to 1.4 sec per MB for quad-core. This is a 91.4% improvement in runtime! To understand the scale of difference on big data, with 1TB of data it will take 1.45 days on GPU vs 17 days on quad-core.
