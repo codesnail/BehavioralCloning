@@ -50,7 +50,7 @@ For this problem, we are ideally working on video frames captured from an actual
 
 The training mode is like a video game in which you drive a car on a track, using the arrow keys on a keyboard or the mouse to control steering. Below is a video of the sample training run:
 
-[training_video.mp4]
+[Training Video](./sample_training_video.mp4)
 
 The simulator actually stores the video in the form of individual images it is comprised of. It also records the steering angle in a csv file, which is recorded against the corresponding fully qualified image file name. The file is called `driving_log.csv`, and below is a sample of this file after running the simulator in training mode.
 
