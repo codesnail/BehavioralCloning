@@ -123,7 +123,9 @@ model.add(Dropout(0.1))
 model.add(Dense(1))
 ```
 #### Layers Specification
-The original Lenet architecture takes in a 32x32 grayscale image. For this project, I replaced the input layer with a 160x320x3 layer to match the input image resolutions. An alternate was to resize all input images to 32x32 (which I have done successfully in the past for traffic sign classification), but I thought we will need more details for this problem and I didn't want to lose important information. However, the input images are cropped using a Keras Cropping layer (code line 112) to filter out parts of the image that don't impact steering decision (e.g. the sky, and in this specific case parts of left and right edges, as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). This gives us a 75x300x3 image. The data is then normalized using a Keras lambda layer (code line 115). The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses 6 channels, a 5x5 kernel, stride of 1, no padding and a relu activation to introduce non-linearity. We can calculate the output dimensions of this layer as follows:
+The original Lenet architecture takes in a 32x32 grayscale image. For this project, the original input layer is replaced with a 160x320x3 layer to match the input image resolutions. An alternate is to resize all input images to 32x32 (which I have done successfully in the past for traffic sign classification), but it looks though we will need more details for this problem and I didn't want to lose important information due to resizing. However, the input images are cropped using a Keras Cropping layer to filter out parts of the image that don't impact steering decision (e.g. the sky, and parts of left and right edges as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). This gives us a 75x300x3 image. The data is then normalized using a Keras lambda layer. Here we can use a straightforward normalization based on domain knowedge (we know image pixels can only range from 0 to 255), but in other cases we would do this based on the mean and standard deviation of the dataset, or use a library like StandardScaler from sklearn. 
+
+The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses 6 channels, a 5x5 kernel, stride of 1, no padding and a relu activation to introduce non-linearity. We can calculate the output dimensions of this layer as follows:
 
 ```
 Output Dimensions = ( (input_dims - kernel_size + 2 * padding) / stride ) + 1
@@ -133,7 +135,7 @@ Output Dim 2 =   ( (300 - 5 + 2 * 0) / 1 ) + 1 = 296
 
 The third dimension is what we chose for the Conv2D layer, in this case 6. So the output of this first Conv2D layer will be 71x296x6.
 
-If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this (and much more) is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
+If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this, and much more, is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
 
 This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This compacts the output dimensions to half (but not the number of channels), producing an output of 78x158x6. This is followed by another pair of convolution and max pooling, and then 3 fully connected layers of 400, 128 and 84 respectively. I added an additional layer of 400 nodes because I'm using higher resolution images, and as I said above I didn't want to lose important information. Reducing the number of nodes to 120 suddenly may cause important information to be lost. The following table summarizes all the layers comprehensively:
 
@@ -160,7 +162,11 @@ This is followed by a max pooling layer that uses a 2x2 kernel, default stride o
 The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
 
 #### Error Function
-The loss function used was mean-squared error, whereas the Adam Optimizer was used to minimize it, which avoids the need to explicitly tune a learning rate.
+The loss function used is mean-squared error, whereas the Adam Optimizer was used to minimize it, which avoids the need to explicitly tune a learning rate.
+
+```
+ model.compile(loss='mse', optimizer='adam')
+```
 
 I also tried more complex networks, first by just experimenting with higher number of channels in the convolution layers and a denser fully connected layer, then trying the NVIDIA network as well. But I didn't see a significant improvement over Lenet.
 
@@ -178,15 +184,18 @@ The model used 80/20 train-validate split to ensure that the model did not overf
 
 #### 3. Model parameter tuning
 
-The model used the Adam Optimizer, so the learning rate was not tuned manually (model.py line 141).
+The model used the Adam Optimizer, so the learning rate was not tuned manually.
 
 ### 4. Training Strategy
 
-Initially I recorded a couple of continuous driving laps using the arrow keys. I split this data into 80/20 for training/validation. I used random shuffling. Although I got decent validation loss, the car in autonomous mode kept veering off road at different points. Then I took a different approach. What I did was stopped the car at various points on the track, specifically set an appropriate steering angle with mouse for that location and pose of the car on the track, and recorded a quick shot of the pose by starting and stopping recording immediately. Little issues like using keyboard vs mouse control was important for this training data, because each behaves differently enough to make a difference in recording the correct training labels. I took these snapshots in the middle of the road, as well as on the side lanes (to train for recovery). In some places, I drove the car at a very low speed and recorded a short window. I did this while driving straight in the center, as well as during recovery from side lines. I recorded about 3000 center camera images in this fashion. Then I further augmented this data set using horizontal reflection to balance turning angles, as the track is mostly turning left. Here is a histogram showing the final distribution of steering angles in the training data:
+Initially I recorded a couple of continuous driving laps using the arrow keys. I split this data into 80/20 for training/validation. I used random shuffling. Although I got decent validation loss, the car in autonomous mode kept veering off road at different points. At this point, looking at the previous histogram of steering angles gives us a clue. Although we balanced right steering angles to match with left ones, the angles are not normally distributed and so the MSE based error optimization is not being effective. What really happened was that the training lap used abrupt steering. This introduced large variances in training data and as a result the network can't learn the subtle steering angles that are needed to keep the car on track. This is indicative of the importance of data collection process, and an example of how errors and noise can be introduced due to issues in that process.
+
+To handle this, I had to tweak my data collection process. What I did was stopped the car at various points on the track, specifically set an appropriate steering angle with mouse (keyboard doesn't allow that precision) for that location and pose of the car on the track, and recorded a quick shot of the pose by starting and stopping recording immediately. Little issues like using keyboard vs mouse control was important for this training data, because each behaves differently enough to make a difference in recording the correct training labels. I took these snapshots in the middle of the road, as well as on the side lanes (to train for recovery). In some places, I drove the car at a very low speed and recorded a short window. I did this while driving straight in the center, as well as during recovery from side lines. I recorded about 3000 center camera images in this fashion. Then I further augmented this data set using horizontal reflection to balance turning angles, as the track is mostly turning left. Here is a histogram showing the final distribution of steering angles in the training data:
 
 ![alt text][image1.5]
 
-The data still has many more straight (zero steering angle) and slight left steering. That's because the track is mostly left or straight. Nevertheless, it is normally distributed around the mean. The model trained on this data had a pretty decent validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
+The data still has many more straight (zero steering angles), but it is normally distributed and smoother than the original one. The model trained on this data had a very decent validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
+
 ```
 Train on 2972 samples, validate on 744 samples
 Epoch 1/2
