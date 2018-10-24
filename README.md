@@ -16,7 +16,7 @@ The pipeline consists of the following steps:
 [image0.1]: ./sim1.PNG "Simulator"
 [image0.2]: ./sim2.PNG "Simulator"
 [image1]: ./Lenet1.png "Model Visualization"
-[image1.3]: ./unbalanced_steering_angles_hist.png "Initial distribution of steering angles"
+[image1.3]: ./unbal_steering_angles_hist.png "Initial distribution of steering angles"
 [image1.4]: ./balanced_steering_angles_hist_1.png "Augmented distribution of steering angles"
 [image1.5]: ./steering_angles_hist.png "Augmented distribution of steering angles 2"
 [image2]: ./image1.jpg "Training Image"
