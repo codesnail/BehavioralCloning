@@ -32,7 +32,7 @@ The pipeline consists of the following steps:
 
 ### Data Collection and Exploration
 
-For this problem, we are ideally working on video frames captured from an actual camera mounted on a car. For this project however, data is collected using a simulator. It has two modes - a manual mode used for training, and an autonomous mode which you can use to test drive the car using your trained model. Following screenshots show what the simulator screen looks like.
+For this project implementation, data is collected using a simulator. It has two modes - a manual mode used for training, and an autonomous mode which you can use to test drive the car using your trained model. Following screenshots show what the simulator screen looks like.
 
 ![alt text][image0.1]
 
