@@ -13,8 +13,8 @@ The pipeline consists of the following steps:
 
 [//]: # (Image References)
 
-[image0.1]: ./sim1.png "Simulator"
-[image0.2]: ./sim2.png "Simulator"
+[image0.1]: ./sim1.PNG "Simulator"
+[image0.2]: ./sim2.PNG "Simulator"
 [image1]: ./Lenet1.png "Model Visualization"
 [image1.3]: ./unbalanced_steering_angles_hist.png "Initial distribution of steering angles"
 [image1.4]: ./balanced_steering_angles_hist_1.png "Augmented distribution of steering angles"
