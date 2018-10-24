@@ -82,9 +82,48 @@ Note that a significant area of the upper half consisting of sky and mountain to
 
 Generally at this stage, we would select a few Machine Learning algorithms to experiment with, generate a few models and then select the best one. In this case, our goal is to use deep learning so we will stick to deep neural networks. If we were to choose other algorithms such as SVM or decision trees, we would also have to work on feature extraction. However deep learning has the benefit that we can completely forgo this step; the neural net layers will take care of creating relevant features out of the raw image.
 
-To setup a working skeleton pipeline and quickly validate it end-to-end, I first started off with a single layer fully connected neural network. Once the pipeline was working, I replaced the single fully connected layer with the Lenet architecture. Choosing the architecture of neural networks is still very much a black art, so it is a good strategy to start with well-known architectures that have been proven to do well for similar problems. Lenet is probably one of the oldest and well known deep learning networks out there. It was originally developed in 1998 for recognizing handwritten digits. It is deep, but light enough to be able to run in good time on my local machine with quad cores. In another project, I have used it successfully to train a traffic sign classifier. So it was a natural first choice. The following figure shows the original architecture of Lenet:
+To setup a working skeleton pipeline and quickly validate it end-to-end, I first started off with a single layer fully connected neural network. Once the pipeline was working, I replaced the single fully connected layer with the Lenet architecture. Choosing the architecture of neural networks is still very much an emperical process, so a good strategy is to start with well-known architectures that have been proven to do well for similar problems. Lenet is probably one of the oldest and well known deep learning networks out there. It was originally developed in 1998 for recognizing handwritten digits. It is deep, but light enough to be able to run in good time on my local machine with quad cores. In another project, I have used it successfully to train a traffic sign classifier. So it was a natural first choice. The following figure shows the original architecture of Lenet:
 
 ![alt text][image1]
+
+#### Layers Specification
+The original Lenet architecture takes in a 32x32 grayscale image. For this project, the original input layer is replaced with a 160x320x3 layer to match the input image resolutions. An alternate is to resize all input images to 32x32, but it looks though we will need more details for this problem and I didn't want to lose important information due to resizing. However, the input images are cropped using a Keras Cropping layer to filter out parts of the image that don't impact steering decision (e.g. the sky, and parts of left and right edges as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). This gives us a 75x300x3 image. The data is then normalized using a Keras lambda layer. Here we can use a straightforward normalization based on domain knowedge (we know image pixels can only range from 0 to 255), but in other cases we would do this based on the mean and standard deviation of the dataset, or use a library like StandardScaler from sklearn. 
+
+The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses 6 channels, a 5x5 kernel, stride of 1, no padding and a relu activation to introduce non-linearity. We can calculate the output dimensions of this layer as follows:
+
+```
+Output Dimensions = ( (input_dims - kernel_size + 2 * padding) / stride ) + 1
+Output Dim 1 =   ( (75 - 5 + 2 * 0) / 1 ) + 1 = 71
+Output Dim 2 =   ( (300 - 5 + 2 * 0) / 1 ) + 1 = 296
+```
+
+The third dimension is the number of channels we chose for the convolution output, in this case 6. So the output of this first Conv2D layer will be 71x296x6.
+
+If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this, and much more, is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
+
+This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This compacts the output dimensions to half (but not the number of channels), producing an output of 78x158x6. This is followed by another pair of convolution and max pooling, and then 3 fully connected layers of 400, 128 and 84 respectively. I added an additional layer of 400 nodes because I'm using higher resolution images, and as I said above I didn't want to lose important information. Reducing the number of nodes to 120 suddenly may cause important information to be lost. The following table summarizes all the layers comprehensively:
+
+| Layer         		    |     Description	        			              	|  Number of weights |
+|:---------------------:|:---------------------------------------------:|:------------------:|
+| Input         		    | 160x320x3 RGB image   							          |                    |
+| Cropping         		  | output 75x300x3 image        							    |                    |
+| Normalize         		| output 75x300x3       							          |                    |
+| Convolution 5x5x6     | 1x1 stride, no padding, outputs 71x296x6     	|  126k              |
+| RELU					        |	Induce non-linearity   	                      |                    |
+| Max pooling	      	  | 2x2 stride,  outputs 35x148x6  	              |                    |
+| Convolution 5x5x16    | 1x1 stride, no padding, outputs 31x144x16   	|  71.4k             |
+| RELU					        |	Induce non-linearity 			                   	|                    |
+| Max pooling	      	  | 2x2 stride,  outputs 15x72x16  	            	|                    |
+| Fully connected		    | Input=17280, output 400		                   	|  6.9M              |
+| RELU                  | Induce non-linearity                          |                    |
+| Fully connected       | Input 400, output 120                         |  80k               |
+| RELU                  | Induce non-linearity                          |                    |
+| Fully connected       | Input 120, output 84                          |  10k               |
+|	Relu  	              |	Induce non-linearity                          |                    |
+| Fully connected       | Input 84, output 1                            |  84                |
+| Total Weights         |                                               |  *7.19M*           |
+
+The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
 
 Here is the code from model.py that implements this architecture:
 
@@ -114,44 +153,6 @@ model.add(Dense(84, activation='relu')) #64
 model.add(Dropout(0.1))
 model.add(Dense(1))
 ```
-#### Layers Specification
-The original Lenet architecture takes in a 32x32 grayscale image. For this project, the original input layer is replaced with a 160x320x3 layer to match the input image resolutions. An alternate is to resize all input images to 32x32, but it looks though we will need more details for this problem and I didn't want to lose important information due to resizing. However, the input images are cropped using a Keras Cropping layer to filter out parts of the image that don't impact steering decision (e.g. the sky, and parts of left and right edges as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). This gives us a 75x300x3 image. The data is then normalized using a Keras lambda layer. Here we can use a straightforward normalization based on domain knowedge (we know image pixels can only range from 0 to 255), but in other cases we would do this based on the mean and standard deviation of the dataset, or use a library like StandardScaler from sklearn. 
-
-The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses 6 channels, a 5x5 kernel, stride of 1, no padding and a relu activation to introduce non-linearity. We can calculate the output dimensions of this layer as follows:
-
-```
-Output Dimensions = ( (input_dims - kernel_size + 2 * padding) / stride ) + 1
-Output Dim 1 =   ( (75 - 5 + 2 * 0) / 1 ) + 1 = 71
-Output Dim 2 =   ( (300 - 5 + 2 * 0) / 1 ) + 1 = 296
-```
-
-The third dimension is what we chose for the Conv2D layer, in this case 6. So the output of this first Conv2D layer will be 71x296x6.
-
-If we were using TensorFlow directly, we would need this calculation to create placeholder variables. The beauty of using Keras is that this, and much more, is automatically done for us behind the scenes. Nevertheless, it is good to know the outputs of the layers to understand what's going on.
-
-This is followed by a max pooling layer that uses a 2x2 kernel, default stride of 2x2 and valid padding. This compacts the output dimensions to half (but not the number of channels), producing an output of 78x158x6. This is followed by another pair of convolution and max pooling, and then 3 fully connected layers of 400, 128 and 84 respectively. I added an additional layer of 400 nodes because I'm using higher resolution images, and as I said above I didn't want to lose important information. Reducing the number of nodes to 120 suddenly may cause important information to be lost. The following table summarizes all the layers comprehensively:
-
-| Layer         		    |     Description	        			              	|  Number of weights |
-|:---------------------:|:---------------------------------------------:|:------------------:|
-| Input         		    | 160x320x3 RGB image   							          |                    |
-| Cropping         		  | output 75x300x3 image        							    |                    |
-| Normalize         		| output 75x300x3       							          |                    |
-| Convolution 5x5x6     | 1x1 stride, no padding, outputs 71x296x6     	|  126k              |
-| RELU					        |	Induce non-linearity   	                      |                    |
-| Max pooling	      	  | 2x2 stride,  outputs 35x148x6  	              |                    |
-| Convolution 5x5x16    | 1x1 stride, no padding, outputs 31x144x16   	|  71.4k             |
-| RELU					        |	Induce non-linearity 			                   	|                    |
-| Max pooling	      	  | 2x2 stride,  outputs 15x72x16  	            	|                    |
-| Fully connected		    | Input=17280, output 400		                   	|  6.9M              |
-| RELU                  | Induce non-linearity                          |                    |
-| Fully connected       | Input 400, output 120                         |  80k               |
-| RELU                  | Induce non-linearity                          |                    |
-| Fully connected       | Input 120, output 84                          |  10k               |
-|	Relu  	              |	Induce non-linearity                          |                    |
-| Fully connected       | Input 84, output 1                            |  84                |
-| Total Weights         |                                               |  *7.19M*           |
-
-The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
 
 #### Error Function
 The loss function used is mean-squared error, whereas the Adam Optimizer was used to minimize it, which avoids the need to explicitly tune a learning rate.
