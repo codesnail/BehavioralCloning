@@ -71,7 +71,7 @@ Another thing I noted is that on training track 1, most of the curves are going 
 
 There are a couple of strategies to account for this. A simple way is to augment the data by horizontally reflecting all images and labelling them with the negative of the corresponding steering angles. This was the approach I chose. Another approach we could do in the simulator is turn the car around on the track and record a video driving the opposite way. 
 
-### Architecture
+### Model Selection and Architecture
 
 To setup a skeleton pipeline, and quickly make sure everything is working end-to-end, I first started off with a single layer fully connected neural network. Once the pipeline was working, I replaced the single fully connected layer with the Lenet architecture (model.py lines 118-129). Choosing the architecture of neural networks is still very much a black art, so it is a good strategy to start with well-known architectures that have been proven to do well for similar problems. Lenet is probably one of the oldest and well known deep learning networks out there. It was originally developed in 1998 for recognizing handwritten digits. It is deep, but light enough to be able to run in good time on my local machine with quad cores. In another project, I have used it successfully to train a traffic sign classifier. So it was a natural first choice. The following figure shows the original architecture of Lenet:
 
