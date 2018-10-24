@@ -15,7 +15,8 @@ The pipeline consists of the following steps:
 
 [image1]: ./Lenet1.png "Model Visualization"
 [image1.3]: ./unbalanced_steering_angles_hist.png "Initial distribution of steering angles"
-[image1.5]: ./steering_angles_hist.png "Distribution of steering angles"
+[image1.4]: ./balanced_steering_angles_hist_1.png "Augmented distribution of steering angles"
+[image1.5]: ./steering_angles_hist.png "Augmented distribution of steering angles 2"
 [image2]: ./image1.jpg "Training Image"
 [image3]: ./image2.jpg "Training Image"
 [image4]: ./image3.jpg "Training Image"
@@ -65,18 +66,62 @@ We see that there are actually three images for each video frame - each correspo
 
 The first thing that stands out is that the steering angle is in much lower scale in the file compared to the simulator video. It turns out the video shows the angle in degrees, whereas driving_log.csv stores it in radians.
 
-Another thing I noted is that on training track 1, most of the curves are going left. This is reflected in the histogram of the steering angles from driving_log.csv:
+Another thing to note is that on training track 1, most of the curves are going left. This is reflected in the histogram of the steering angles from driving_log.csv:
 
 ![alt text][image1.3]
 
-There are a couple of strategies to account for this. A simple way is to augment the data by horizontally reflecting all images and labelling them with the negative of the corresponding steering angles. This was the approach I chose. Another approach we could do in the simulator is turn the car around on the track and record a video driving the opposite way. 
+This indicates an unbalanced dataset. There are a lot more samples of left and zero steering angles, but barely any for right. This could result in the model learning to turn left all the time and may go off the road. There are a couple of strategies to account for this. A simple way is to augment the data by horizontally reflecting all images and labelling them with the negative of the corresponding steering angles. This was the approach I chose. Another approach we could use in the simulator is turn the car around on the track and record a video driving in the opposite way. Here is the histogram after augmenting the dataset with reflected images and steering angles:
+
+![alt_text][image1.4]
+
+The individual image frames are shaped 160x320x3. Here are some sample images from my training set:
+
+![alt text][image2]
+![alt text][image3]
+![alt text][image4]
+![alt text][image5]
+![alt text][image6]
+![alt text][image7]
+![alt text][image8]
+
+Note that a significant area of the upper half consisting of sky and mountain tops is irrelevant to the steering angle. We will crop out this area to get rid of irrelevant details (about 75 pixels from the top). Same is the case with the bottom almost 25 pixels (where the hood of the car can be seen). This will reduce our feature space.
 
 ### Model Selection and Architecture
 
-To setup a skeleton pipeline, and quickly make sure everything is working end-to-end, I first started off with a single layer fully connected neural network. Once the pipeline was working, I replaced the single fully connected layer with the Lenet architecture (model.py lines 118-129). Choosing the architecture of neural networks is still very much a black art, so it is a good strategy to start with well-known architectures that have been proven to do well for similar problems. Lenet is probably one of the oldest and well known deep learning networks out there. It was originally developed in 1998 for recognizing handwritten digits. It is deep, but light enough to be able to run in good time on my local machine with quad cores. In another project, I have used it successfully to train a traffic sign classifier. So it was a natural first choice. The following figure shows the original architecture of Lenet:
+Generally at this stage, we would select a few Machine Learning algorithms to experiment with, generate a few models and then select the best one. In this case, our goal is to use deep learning so we will stick to deep neural networks. If we were to choose other algorithms such as SVM or decision trees, we would also have to work on feature extraction. However deep learning has the benefit that we can completely forgo this step; the neural net layers will take care of creating relevant features out of the raw image.
+
+To setup a working skeleton pipeline and quickly validate it end-to-end, I first started off with a single layer fully connected neural network. Once the pipeline was working, I replaced the single fully connected layer with the Lenet architecture. Choosing the architecture of neural networks is still very much a black art, so it is a good strategy to start with well-known architectures that have been proven to do well for similar problems. Lenet is probably one of the oldest and well known deep learning networks out there. It was originally developed in 1998 for recognizing handwritten digits. It is deep, but light enough to be able to run in good time on my local machine with quad cores. In another project, I have used it successfully to train a traffic sign classifier. So it was a natural first choice. The following figure shows the original architecture of Lenet:
 
 ![alt text][image1]
 
+Here is the code from model.py that implements this architecture:
+
+```
+from keras.models import Sequential
+from keras.layers import Dropout, Flatten, Dense, Conv2D, MaxPooling2D, Cropping2D, Lambda
+
+model = Sequential()
+# Crop the input image to filter out irrelevant parts such as the sky
+# and off-road portions on the sides...
+model.add(Cropping2D(cropping=((75,10),(10,10)), input_shape=(160,320,3)))
+
+# Normalize image with zero mean...
+model.add(Lambda(lambda x: (x/255.0)-0.5))
+
+# Implement Lenet architecture...
+model.add(Conv2D(6, (5,5), activation='relu', strides=1, padding='valid'))
+model.add(MaxPooling2D(pool_size=(2,2), padding='valid'))
+model.add(Conv2D(16, (5,5), activation='relu', strides=1, padding='valid'))
+model.add(MaxPooling2D(pool_size=(2,2), padding='valid'))
+model.add(Flatten())
+model.add(Dense(400, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(84, activation='relu')) #64
+model.add(Dropout(0.1))
+model.add(Dense(1))
+```
 #### Layers Specification
 The original Lenet architecture takes in a 32x32 grayscale image. For this project, I replaced the input layer with a 160x320x3 layer to match the input image resolutions. An alternate was to resize all input images to 32x32 (which I have done successfully in the past for traffic sign classification), but I thought we will need more details for this problem and I didn't want to lose important information. However, the input images are cropped using a Keras Cropping layer (code line 112) to filter out parts of the image that don't impact steering decision (e.g. the sky, and in this specific case parts of left and right edges, as I know we don't need to deal with other objects like cars and pederstrians appearing in these extremeties). This gives us a 75x300x3 image. The data is then normalized using a Keras lambda layer (code line 115). The first 2 layers are a pair of 2D convolution followed by a max pooling layer. The conv layer uses 6 channels, a 5x5 kernel, stride of 1, no padding and a relu activation to introduce non-linearity. We can calculate the output dimensions of this layer as follows:
 
@@ -156,17 +201,6 @@ Epoch 1/1
 2972/2972 [==============================] - 130s 44ms/step - loss: 0.0042 - val_loss: 0.0318
 ```
 This finally produced a model that did a complete lap on track 1 without going off-road.
-
-Here are some sample images from my training set:
-
-![alt text][image2]
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-![alt text][image6]
-![alt text][image7]
-![alt text][image8]
-
 
 ### Simulation
 
