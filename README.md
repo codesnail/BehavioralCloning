@@ -2,7 +2,7 @@
 
 ---
 
-The goal of this project is to train a deep learning model to keep a car in the lane, based on a video stream of the road as seen from a camera mounted on the car, and demonstrated driving behavior (steering angles).
+This report describes an implementation of deep learning for Behavioral Cloning. The result is a model that learns to keep a car in the lane, based on a video stream of the road as seen from a camera mounted on the car, and demonstrated driving behavior in the form of steering angles.
 
 The pipeline consists of the following steps:
 * Use the Udacity simulator to collect data of good driving behavior
