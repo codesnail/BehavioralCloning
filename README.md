@@ -165,9 +165,11 @@ I also tried more complex networks, first by just experimenting with higher numb
 
 #### 2. Handling Overfitting
 
-Dropout layers were added in order to reduce overfitting. I experimented with higher and lower dropout rates, and finally settled on 20% dropout after first two fully connected layers of Lenet, and a 10% dropout after the last fully connected layer.
+The model used 80/20 train-validate split to ensure that the model did not overfit. Dropout layers were added in order to reduce overfitting. Dropout is a new popular technique to avoid overfitting in deep networks, and is both conceptually and practically simpler to implement. Conventional regularization works by adding a penalty term to the error measure, which accentuates larger model weights, thereby reducing them in subsequent training iterations. The penalty term itself is also weighted by yet another parameter. Instead, in the dropout scheme, we randomly drop some connections between nodes in 2 layers of the network. It may seem like a counter intuitive method, but in reality works quite well. What it does is forces the network to learn multiple redundant representations of the important features. This is specially true for deep networks as there is a large number of connections between layers. In regularization, it is also possible for some features to go down to zero (particularly in L1 regularization), so theoretically the concept is similar.
 
-The model used 80/20 train-validate split to ensure that the model did not overfit (model.py line 141). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+You have to decide the percentage of dropout. Starting with 50% is a frequent rule of thumb. I experimented with higher and lower dropout rates, and finally settled on 20% dropout after the first two fully connected layers of Lenet, and a 10% dropout after the last fully connected layer.
+
+The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 #### 3. Model parameter tuning
 
