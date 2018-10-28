@@ -76,7 +76,7 @@ The individual image frames are shaped 160x320x3. Here are some sample images fr
 ![alt text][image7]
 ![alt text][image8]
 
-Note that a significant area of the upper half consisting of sky and mountain tops is irrelevant to the steering angle. We will crop out this area to get rid of irrelevant details (about 75 pixels from the top). Same is the case with the bottom almost 25 pixels (where the hood of the car can be seen). This will reduce our feature space.
+Note that a significant area of the upper half consisting of sky, tree tops and hills is irrelevant to the steering angle. We will crop out this area to get rid of irrelevant details (about 75 pixels from the top). Same is the case with the bottom almost 25 pixels (where the hood of the car can be seen). This will reduce our feature space.
 
 ### Model Selection and Architecture
 
