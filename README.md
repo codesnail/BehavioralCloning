@@ -44,7 +44,7 @@ The training mode is like a video game in which you drive a car on a track, usin
 
 [Training Video](./sample_training_video.mp4)
 
-The simulator actually stores the video in the form of individual images it is comprised of. It also outputs `driving_log.csv` which records the steering angle against the corresponding fully qualified image file name. The file is called , and below is a sample of this file after running the simulator in training mode.
+The simulator actually stores the video in the form of individual images it is comprised of. It also outputs `driving_log.csv` which records the steering angle against the corresponding fully qualified image file name. Below is a sample of this file after running the simulator in training mode.
 
 ```
 C:\ahmed\CarND\behavioral_cloning\IMG\center_2018_07_30_19_54_48_078.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\left_2018_07_30_19_54_48_078.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\right_2018_07_30_19_54_48_078.jpg,0,0,0,9.254003E-07
