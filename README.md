@@ -221,13 +221,13 @@ For this experiment, a g2.2xlarge instance was provisioned on AWS cloud, with 1 
 
 For training this model on the cloud, I had to generate and upload an 81MB zip file of my training images data. This data size is small enough to be feasible for multipe iterations of fresh data collection, upload and training. But for big data (on the order of GBs or TBs), this could be a significant challenge.
 
-Many popular development environments are not optimized for cloud development still. You generally need 2-3 parallel channels for this type of environment. 
+Many popular development environments are still not optimized for cloud development. You generally need 2-3 parallel channels for this type of environment. 
 
 1. A channel for transferring files back and forth from your server or storage in the cloud, e.g. in this case uploading my training data, and downloading my trained model.
 1. A channel for running your program on the cloud, e.g. in this case my training program, model.py.
 1. Optionally, a separate channel for quick edits to your code and checking into your repository directly from cloud. For bigger changes, you are probably better off editing your changes in your local repository, committing them and downloading on your cloud instance.
 
-I find it useful to open 3 separate shells for this purpose. Two connected to my cloud instance, and one for my local file system (for uploading and downloading files).
+I find it useful to open 3 separate shells for this purpose. Two connected to my cloud instance, and one for my local file system (for uploading and downloading files). In an ideal cloud IDE, these functions would be provided by the File or Project Explorer pane, the Code Editor pane, and the Output pane.
 
 #### Performance Impact of Removing or adding layers
 
