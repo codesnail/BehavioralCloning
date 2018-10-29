@@ -56,15 +56,7 @@ C:\ahmed\CarND\behavioral_cloning\IMG\center_2018_07_30_19_54_48_324.jpg,C:\ahme
 
 We see that there are actually three images for each video frame - each corresponding to the center, left or right camera mounted on the (simulated) vehicle. The last number in the row is the recorded steering angle for that frame, and that will be used as our label and ground truth. The other 3 numbers before the steering angle include speed and a couple of other fields, but we are not interested in those for now (we will use a constant speed in autonomous mode for now).
 
-The first thing that stands out is that the steering angle is in much lower scale in the file compared to the simulator video. It turns out the video shows the angle in degrees, whereas driving_log.csv stores it in radians.
-
-Another thing to note is that on training track 1, most of the curves are going left. This is reflected in the histogram of the steering angles from driving_log.csv:
-
-![alt text][image1.3]
-
-This indicates an unbalanced dataset. There are a lot more samples of left and zero steering angles, but barely any for right. This could result in the model learning to turn left all the time and may go off the road. There are a couple of strategies to account for this. A simple way is to augment the data by horizontally reflecting all images and labelling them with the negative of the corresponding steering angles. This was the approach I chose. Another approach we could use in the simulator is turn the car around on the track and record a video driving in the opposite way. Here is the histogram after augmenting the dataset with reflected images and steering angles:
-
-![alt_text][image1.4]
+The first thing that stands out is that the steering angle in the file is in radians, compared to degrees in the video.
 
 The individual image frames are shaped 160x320x3. Here are some sample images from my training set:
 
@@ -77,6 +69,26 @@ The individual image frames are shaped 160x320x3. Here are some sample images fr
 ![alt text][image8]
 
 Note that a significant area of the upper half consisting of sky, tree tops and hills is irrelevant to the steering angle. We will crop out this area to get rid of irrelevant details (about 75 pixels from the top). Same is the case with the bottom almost 25 pixels (where the hood of the car can be seen). This will reduce our feature space.
+
+Another thing to note is that on training track 1, most of the curves are going left. This can be seen in the histogram of the steering angles from driving_log.csv:
+
+![alt text][image1.3]
+
+This indicates an unbalanced dataset. This could result in the model learning to turn left all the time and may go off the road. There are a couple of strategies to account for this. A simple way is to augment the data by horizontally reflecting all images and labelling them with the negative of the corresponding steering angles. This was the approach chosen here. Another approach we could use in the simulator is to turn the car around on the track and record a video driving in the opposite way. 
+
+Here is the histogram after augmenting the dataset with reflected images and steering angles:
+
+![alt_text][image1.4]
+
+There is another remaining issue. Note that in the histogram above, the angles are not normally distributed. Because this is a regression problem, we intend to use the Root Mean Squared Error (RMSE) based error optimization scheme. RMSE assumes a normal distribution, so it will not be effective if data is not normally distributed. 
+
+This is actually a result of how data was collected. The training lap used keyboard controls, which causes acute steering changes. This introduces large variances in training data and as a result the network can't learn the subtle steering angles that are needed to keep the car on track. This is indicative of the importance of data collection process, and an example of how errors and noise can be introduced due to issues in that process.
+
+To collect good data, I stopped the car at various points on the track, specifically set an appropriate steering angle with mouse (keyboard doesn't allow that precision) for that location and pose of the car on the track, and recorded a quick shot of the pose by starting and stopping recording immediately. I took these snapshots in the middle of the road, as well as on the side lanes (to train for recovery). In some places, I drove the car at a very low speed and recorded a short window. I did this while driving straight in the center, as well as during recovery from side lines. This resulted in about 3000 center camera images. Here is a histogram showing the final distribution of steering angles in the training data (after horizontal reflection):
+
+![alt text][image1.5]
+
+The data still has many more straight (zero steering angles), but it is normally distributed and smoother than the original one. 
 
 ### Model Selection and Architecture
 
@@ -179,13 +191,7 @@ The model used the Adam Optimizer, so the learning rate was not tuned manually.
 
 ### 4. Training Strategy
 
-Although we balanced right and left steering angles, there is another remaining issue. Note that in the histogram of steering angles above, the angles are not normally distributed. The Root Mean Squared Error (RMSE) based error optimization assumes a normal distribution, so it will not be effective if data is not normally distributed. This is actually a result of how data was collected. The training lap used keyboard controls, which causes acute steering changes. This introduces large variances in training data and as a result the network can't learn the subtle steering angles that are needed to keep the car on track. This is indicative of the importance of data collection process, and an example of how errors and noise can be introduced due to issues in that process.
-
-To collect good data, I stopped the car at various points on the track, specifically set an appropriate steering angle with mouse (keyboard doesn't allow that precision) for that location and pose of the car on the track, and recorded a quick shot of the pose by starting and stopping recording immediately. Little issues like using keyboard vs mouse control was important for this training data, because each behaves differently enough to make a difference in recording the correct training labels. I took these snapshots in the middle of the road, as well as on the side lanes (to train for recovery). In some places, I drove the car at a very low speed and recorded a short window. I did this while driving straight in the center, as well as during recovery from side lines. This resulted in about 3000 center camera images. Then I further augmented this data set using horizontal reflection to balance turning angles. Here is a histogram showing the final distribution of steering angles in the training data:
-
-![alt text][image1.5]
-
-The data still has many more straight (zero steering angles), but it is normally distributed and smoother than the original one. The model trained on this data had a very decent validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
+The model trained on this data had a very decent validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
 
 ```
 Train on 2972 samples, validate on 744 samples
