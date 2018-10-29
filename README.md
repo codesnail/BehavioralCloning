@@ -177,22 +177,10 @@ The loss function used is mean-squared error, whereas the Adam Optimizer was use
 
 I also tried more complex networks, first by just experimenting with higher number of channels in the convolution layers and a denser fully connected layer, then trying the [NVIDIA](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) network as well. But I didn't see a significant improvement over Lenet.
 
-#### 2. Handling Overfitting
+### Training Strategy, Tuning and Results
 
-The model used 80/20 train-validate split to ensure that the model did not overfit. Dropout layers were added in order to reduce overfitting. Dropout is a new popular technique to avoid overfitting in deep networks, and is both conceptually and practically simpler to implement. Conventional regularization works by adding a penalty term to the error measure, which accentuates larger model weights, thereby reducing them in subsequent training iterations. The penalty term itself is also weighted by yet another parameter. Instead, in the dropout scheme, we randomly drop some connections between nodes in 2 layers of the network. It may seem like a counter intuitive method, but in reality works quite well. What it does is forces the network to learn multiple redundant representations of the important features. This is specially true for deep networks as there is a large number of connections between layers. In regularization, it is also possible for some features to go down to zero (particularly in L1 regularization), so theoretically the concept is similar.
-
-You have to decide the percentage of dropout. Starting with 50% is a frequent rule of thumb. I experimented with higher and lower dropout rates, and finally settled on 20% dropout after the first two fully connected layers of Lenet, and a 10% dropout after the last fully connected layer.
-
-The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
-
-#### 3. Model parameter tuning
-
-The model used the Adam Optimizer, so the learning rate was not tuned manually.
-
-### 4. Training Strategy
-
-The model trained on this data had a very decent validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
-
+The above architecture trained on the training data had a very decent validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
+ 
 ```
 Train on 2972 samples, validate on 744 samples
 Epoch 1/2
@@ -200,13 +188,25 @@ Epoch 1/2
 Epoch 2/2
 2972/2972 [==============================] - 122s 41ms/step - loss: 0.0095 - val_loss: 0.0410
 ```
-There were a couple of instances of going off-road, but that was corrected by recording specific poses for those spots, and training the previously saved model for one more epoch with the added training data. The validation loss went further down:
+There were a couple of instances of going off-road. That was corrected by recording specific poses for those spots, and training the previously saved model for one more epoch with the added training data. The validation loss went further down:
 ```
 Train on 2972 samples, validate on 744 samples
 Epoch 1/1
 2972/2972 [==============================] - 130s 44ms/step - loss: 0.0042 - val_loss: 0.0318
 ```
 This finally produced a model that did a complete lap on track 1 without going off-road.
+
+#### Handling Overfitting
+
+The model used 80/20 train-validate split to ensure that the model did not overfit. Dropout layers were added in order to reduce overfitting. Dropout is a newer technique to avoid overfitting in deep networks, and is both conceptually and practically simpler to implement than regularization. Conventional regularization works by adding a penalty term to the error measure, which accentuates larger model weights, thereby reducing them in subsequent training iterations. The penalty term itself is also weighted by yet another hyper-parameter. Instead, in the dropout scheme, we randomly drop some connections between nodes in 2 layers of the network. It seems a bit strange at first, but in reality works quite well. What it does is forces the network to learn redundant representations of the important features. This is specially true for deep networks as there is a large number of connections between layers. In regularization, it is also possible for some features to go down to zero (particularly in L1 regularization), so theoretically the concept is similar.
+
+You have to decide the percentage of dropout. Starting with 50% is a frequent rule of thumb. I experimented with higher and lower dropout rates, and finally settled on 20% dropout after the first two fully connected layers of Lenet, and a 10% dropout after the last fully connected layer.
+
+The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+
+#### Model parameter tuning
+
+Traditionally, we would also spend quite some time in hyper-parameter tuning, specially if we use gradient descent or stochastic gradient descent. One of the key hyper parameters is the learning rate, followed by momentum. The basic idea is that with each iteration, the weights are updated only by a small amount, otherwise it may cause huge swings in weight updates and cause the weights to oscillate between one and the other extreme. Momentum helps in avoiding the model getting stuck in a local minimum. This model used the Adam Optimizer, which adjusts the learning rates for each weight over iterations by using the first and second moments (mean and variance) of the gradients. This way it provides an adaptive process for the weight updates, so we don't have to tune the learning rate and momentum explicitly.
 
 ### Simulation
 
