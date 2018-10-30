@@ -169,7 +169,7 @@ model.add(Dense(1))
 ```
 
 #### Error Function
-The loss function used is mean-squared error, whereas the Adam Optimizer was used to minimize it, which avoids the need to explicitly tune a learning rate.
+The loss function used is mean-squared error, whereas the Adam Optimizer was used to minimize it (more on this below).
 
 ```
  model.compile(loss='mse', optimizer='adam')
