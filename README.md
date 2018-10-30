@@ -175,8 +175,6 @@ The loss function used is mean-squared error, whereas the Adam Optimizer was use
  model.compile(loss='mse', optimizer='adam')
 ```
 
-I also tried more complex networks, first by just experimenting with higher number of channels in the convolution layers and a denser fully connected layer, then trying the [NVIDIA](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) network as well. But I didn't see a significant improvement over Lenet.
-
 ### Training Strategy, Tuning and Results
 
 The above architecture trained on the training data had a very decent validation loss, and did pretty well even when trained for only 2 epochs, as can be seen below:
