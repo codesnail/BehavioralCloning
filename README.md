@@ -88,7 +88,7 @@ To collect good data, I stopped the car at various points on the track, specific
 
 ![alt text][image1.5]
 
-The data still has many more straight (zero steering angles), but it is normally distributed and smoother than the original one. 
+The data still has many more straight (zero) angles, but it is normally distributed and smoother than the original one. 
 
 ### Model Selection and Architecture
 
