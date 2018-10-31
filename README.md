@@ -2,10 +2,10 @@
 
 ---
 
-This report describes an implementation of deep learning for Behavioral Cloning. The result is a model that learns to keep a car in the lane, based on a video stream of the road as seen from a camera mounted on the car, and demonstrated driving behavior in the form of steering angles.
+This project implements Behavioral Cloning for a self-driving car using deep neural networks with Keras and Tensorflow backend. The result is a model that learns to keep a car in the lane, based on a video stream of the road as seen from a camera mounted on the car, and demonstrated driving behavior in the form of steering angles.
 
 The pipeline consists of the following steps:
-* Use the Udacity simulator to collect data of good driving behavior
+* Use a simulator to collect data of good driving behavior
 * Build a Convolutional Neural Network (CNN) in Keras that predicts steering angles from images
 * Train and validate the model with a training and validation set
 * Test that the model successfully drives around track One in the simulator without leaving the road
