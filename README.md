@@ -13,20 +13,20 @@ The pipeline consists of the following steps:
 
 [//]: # (Image References)
 
-[image0.1]: ./sim1.PNG "Simulator"
-[image0.2]: ./sim2.PNG "Simulator"
-[image1]: ./Lenet1.png "Model Visualization"
-[image1.3]: ./unbal_steering_angles_hist.png "Initial distribution of steering angles"
-[image1.4]: ./balanced_steering_angles_hist_1.png "Augmented distribution of steering angles"
-[image1.5]: ./steering_angles_hist.png "Augmented distribution of steering angles 2"
-[image2]: ./image1.jpg "Training Image"
-[image3]: ./image2.jpg "Training Image"
-[image4]: ./image3.jpg "Training Image"
-[image5]: ./image4.jpg "Training Image"
-[image6]: ./image5.jpg "Training Image"
-[image7]: ./image6.jpg "Training Image"
-[image8]: ./image7.jpg "Training Image"
-[image9]: ./performance.png "Performance"
+[image0.1]: ./images/sim1.PNG "Simulator"
+[image0.2]: ./images/sim2.PNG "Simulator"
+[image1]: ./images/Lenet1.png "Model Visualization"
+[image1.3]: ./images/unbal_steering_angles_hist.png "Initial distribution of steering angles"
+[image1.4]: ./images/balanced_steering_angles_hist_1.png "Augmented distribution of steering angles"
+[image1.5]: ./images/steering_angles_hist.png "Augmented distribution of steering angles 2"
+[image2]: ./images/image1.jpg "Training Image"
+[image3]: ./images/image2.jpg "Training Image"
+[image4]: ./images/image3.jpg "Training Image"
+[image5]: ./images/image4.jpg "Training Image"
+[image6]: ./images/image5.jpg "Training Image"
+[image7]: ./images/image6.jpg "Training Image"
+[image8]: ./images/image7.jpg "Training Image"
+[image9]: ./images/performance.png "Performance"
 
 ---
 
@@ -42,7 +42,7 @@ Clicking on Training Mode takes us to a screen like this:
 
 The training mode is like a video game in which you drive a car on a track, using the arrow keys on a keyboard or the mouse to control steering. Below is a video of the sample training run:
 
-[Training Video](./sample_training_video.mp4)
+[Training Video](./videos/sample_training_video.mp4)
 
 The simulator actually stores the video in the form of individual images it is comprised of. It also outputs `driving_log.csv` which records the steering angle against the corresponding fully qualified image file name. Below is a sample of this file after running the simulator in training mode.
 
@@ -206,7 +206,7 @@ Traditionally, we would also spend quite some time on hyper-parameter tuning, sp
 
 ### Simulation
 
-Here is a video output of the car driving autonomously on track 1. [Simulation Video](./run2.mp4)
+Here is a video output of the car driving autonomously on track 1. [Simulation Video](./videos/run2_autonomous.mp4)
 
 ### Performance
 
