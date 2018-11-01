@@ -35,6 +35,8 @@ The pipeline consists of the following steps:
   * [Layers Specification](#layers-specification)
   * [Error Function](#error-function)
 * [Training Strategy, Tuning and Results](#training-strategy-tuning-and-results)
+  * [Handling Overfitting](#handling-overfitting)
+  * [Model Parameter Tuning](#model-parameter_tuning)
 * [Simulation](#simulation)
 * [Performance](#performance)
   * [Performance on GPU on AWS](#performance-on-gpu-on-amazon-cloud)
