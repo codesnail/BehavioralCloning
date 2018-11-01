@@ -64,22 +64,6 @@ class ImageBatchSequence(Sequence):
         
         return np.array(images), np.array(batch_y)
     
-    def __getitem2__(self, idx):
-        # Generate indexes of the batch
-
-        batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size]
-        batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]       
-        
-        images = [mpimg.imread(filename) for filename in batch_x]
-         
-        for i in range(self.batch_size):
-            image_flipped = np.fliplr(images[i])
-            measurement_flipped = -batch_y[i]
-            images.append(image_flipped)
-            batch_y.append(measurement_flipped)
-        
-        return np.array(images), np.array(batch_y)
-    
 
 def lenet(reset_mode=True):
     model = None
