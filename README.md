@@ -28,6 +28,10 @@ The pipeline consists of the following steps:
 [image8]: ./images/image7.jpg "Training Image"
 [image9]: ./images/performance.png "Performance"
 
+### Table of Contents:
+
+[Data Collection and Exploration](#data-collection-and-exploration)
+
 ---
 
 ### Data Collection and Exploration
