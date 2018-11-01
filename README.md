@@ -31,6 +31,10 @@ The pipeline consists of the following steps:
 ### Table of Contents:
 
 [Data Collection and Exploration](#data-collection-and-exploration)
+[Model Selection and Architecture](#model-selection-and-architecture)
+[Training Strategy, Tuning and Results](#training-strategy-tuning-and-results)
+[Simulation](#simulation)
+[Performance](#performance)
 
 ---
 
