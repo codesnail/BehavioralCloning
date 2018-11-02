@@ -268,31 +268,27 @@ Another resource we want to keep an eye on, specially when dealing with big data
 ```
 class ImageBatchSequence(Sequence):
 
-    def __init__(self, x_set, y_set, batch_size, shuffle=False, generator_name='train'):
+    def __init__(self, x_set, y_set, batch_size, generator_name='train'):
         #print("__init__", shuffle, " - ", generator_name)
         self.x, self.y = x_set, y_set
         self.batch_size = batch_size
-        self.shuffle = shuffle
         self.indexes = np.arange(len(self.x))
         self.generator_name = generator_name
-    
-    def on_epoch_end(self):
-        'Updates indexes after each epoch'
-        #print("on_epoch_end(): ", self.generator_name)
-        self.indexes = np.arange(len(self.x))
-        if self.shuffle == True:
-            np.random.shuffle(self.indexes)
     
     def __len__(self):
         #print("called __len__(): ", self.generator_name)
         return int(np.ceil(len(self.x) / float(self.batch_size)))
-
+    
     def __getitem__(self, idx):
         # Generate indexes of the batch
-        indexes = self.indexes[idx*self.batch_size:(idx+1)*self.batch_size]
-        images = [mpimg.imread(self.x[ind]) for ind in indexes]
-        batch_y = [self.y[ind] for ind in indexes]
-               
+
+        batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size]
+        batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]       
+        
+        #print("__getitem__(): idx = ", idx, " - ", self.generator_name)
+ 
+        images = [mpimg.imread(filename) for filename in batch_x]
+         
         for i in range(self.batch_size):
             image_flipped = np.fliplr(images[i])
             measurement_flipped = -batch_y[i]
@@ -301,7 +297,8 @@ class ImageBatchSequence(Sequence):
         
         return np.array(images), np.array(batch_y)
 ```
-The minimum requirement is to implement __len__() and __getitem__(). Here I also added the on_epoch_end() method. Basically, this will enable us to randomly shuffle the data for each training epoch. It mainly helps reaching the optimal weights faster.
+
+The minimum requirement is to implement __len__() and __getitem__(). You could also add on_epoch_start() or on_epoch_end() if you want to do something on those life-cycle events.
 
 Next, I just load the file names of my training data, and the labels. We could even modify this part to be in the generator if we really need to, but in this case it takes up a small amount of memory to load filenames and labels, and I already have the boilder plate for this so it was an easier refactoring to do it this way.
 
