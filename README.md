@@ -303,7 +303,59 @@ class ImageBatchSequence(Sequence):
 ```
 The minimum requirement is to implement __len__() and __getitem__(). Here I also added the on_epoch_end() method. Basically, this will enable us to randomly shuffle the data for each training epoch. It mainly helps reaching the optimal weights faster.
 
-Next, I instantiate 2 generators, one for training and another for validation:
+Next, I just load the file names of my training data, and the labels. We could even modify this part to be in the generator if we really need to, but in this case it takes up a small amount of memory to load filenames and labels, and I already have the boilder plate for this so it was an easier refactoring to do it this way.
+
+```
+X, y = loadData(training_size)
+model = lenet(reset_model)
+```
+Then I split my data into training and validation sets:
+
+```
+X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=np.random.randint(0, 100))
+```
+
+Next, I instantiate 2 generators, for training and validation:
+
+```
+trainingGenerator = ImageBatchSequence(X_train, y_train, 100, shuffle=True, generator_name="train")
+validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, shuffle=True, generator_name="validate" )
+```
+
+Finally, I replace model.fit() with model.fit_generator() to use the generator:
+
+```
+model.fit_generator(
+            generator=trainingGenerator,
+            validation_data=validationGenerator,
+            shuffle=True,
+            epochs=2
+        )
+```
+
+The entire train() method now looks like the following. Notice that I do the train/test split and call fit_generator() inside a loop so as to ensure I can train and validate on different data.
+
+```
+def train(training_size, reset_model=True):
+    X, y = loadData(training_size)
+    model = lenet(reset_model)
+    
+    for i in range(0,2):
+        X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=np.random.randint(0, 100))
+        trainingGenerator = ImageBatchSequence(X_train, y_train, 100, shuffle=True, generator_name="train")
+        validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, shuffle=True, generator_name="validate" )
+    
+        model.fit_generator(
+            generator=trainingGenerator,
+            validation_data=validationGenerator,
+            shuffle=True,
+            epochs=2
+            #use_multiprocessing=False,
+            #workers=4
+        )
+        
+        model.save('model3.h5')
+```
 
 #### Files Submitted
 
