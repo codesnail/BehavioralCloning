@@ -9,7 +9,6 @@ The pipeline consists of the following steps:
 * Build a Convolutional Neural Network (CNN) in Keras that predicts steering angles from images
 * Train and validate the model with a training and validation set
 * Test that the model successfully drives around track One in the simulator without leaving the road
-* Summarize the results with a written report
 
 [//]: # (Image References)
 
