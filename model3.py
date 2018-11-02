@@ -63,7 +63,30 @@ class ImageBatchSequence(Sequence):
             batch_y.append(measurement_flipped)
         
         return np.array(images), np.array(batch_y)
+ 
+def loadData(training_size):
+    lines = []
+    folder = 'C:\\Yaser\\Udacity\\CarND-Term1\\BehavioralCloning\\data\\'
     
+    with open(folder + 'driving_log.csv') as csvFile:
+        reader = csv.reader(csvFile)
+        for line in reader:
+            lines.append(line)
+            
+    filenames = []
+    measurements = []
+    for csv_line in lines[:training_size]:
+        source_path = csv_line[0]
+        filename = source_path.split('\\')[-1]
+        #filename = source_path.split('/')[-1]
+        filename = folder + 'IMG\\' + filename
+        filenames.append(filename)
+        
+        center_correction = 0.00
+        steering_center = float(csv_line[3]) + center_correction
+        measurements.append(steering_center)
+        
+    return filenames, measurements
 
 def lenet(reset_mode=True):
     model = None
