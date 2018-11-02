@@ -26,35 +26,38 @@ from sklearn.model_selection import train_test_split
 
 class ImageBatchSequence(Sequence):
 
-    def __init__(self, x_set, y_set, batch_size, shuffle=False, generator_name='train'):
+    def __init__(self, x_set, y_set, batch_size, generator_name='train'):
         #print("__init__", shuffle, " - ", generator_name)
         self.x, self.y = x_set, y_set
         self.batch_size = batch_size
-        self.shuffle = shuffle
         self.indexes = np.arange(len(self.x))
         self.generator_name = generator_name
     
+    '''
     def on_epoch_end(self):
         'Updates indexes after each epoch'
         #print("on_epoch_end(): ", self.generator_name)
         self.indexes = np.arange(len(self.x))
         if self.shuffle == True:
             np.random.shuffle(self.indexes)
+    '''
     
     def __len__(self):
         #print("called __len__(): ", self.generator_name)
         return int(np.ceil(len(self.x) / float(self.batch_size)))
 
-    def __getitem__(self, idx):
+    def __getitem2__(self, idx):
         # Generate indexes of the batch
         #print("__getitem__(): idx*batch_size, (idx+1)*batch_size = ", idx*self.batch_size, (idx+1)*self.batch_size)
         indexes = self.indexes[idx*self.batch_size:(idx+1)*self.batch_size]
         images = [mpimg.imread(self.x[ind]) for ind in indexes]
         batch_y = [self.y[ind] for ind in indexes]
         
-        #if(idx==0):
+        #print("__getitem__: stage 4")
+        
+        if(idx==0):
             #print("batch_x[0] = ", batch_x[0], " - ", self.generator_name)
-            #print("indexes[0] = ", indexes[0], " - ", self.generator_name)
+            print("indexes[0] = ", indexes[0], " - ", self.generator_name)
         
         for i in range(self.batch_size):
             image_flipped = np.fliplr(images[i])
@@ -62,12 +65,35 @@ class ImageBatchSequence(Sequence):
             images.append(image_flipped)
             batch_y.append(measurement_flipped)
         
+        #print("__getitem__: stage 3")
         return np.array(images), np.array(batch_y)
+    
+    def __getitem__(self, idx):
+        # Generate indexes of the batch
+
+        batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size]
+        batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]       
+        
+        #print("__getitem__(): idx = ", idx, " - ", self.generator_name)
  
+        images = [mpimg.imread(filename) for filename in batch_x]
+         
+        for i in range(self.batch_size):
+            image_flipped = np.fliplr(images[i])
+            measurement_flipped = -batch_y[i]
+            images.append(image_flipped)
+            batch_y.append(measurement_flipped)
+        
+        return np.array(images), np.array(batch_y)
+
+
 def loadData(training_size):
     lines = []
+    #folder = 'C:\\Users\\ahmed\\OneDrive\\CarND\\behavioral_cloning\\'
+    #folder = 'C:/Users/ahmed/OneDrive/CarND/spyderws/BehavioralCloning/'
     folder = 'C:\\Yaser\\Udacity\\CarND-Term1\\BehavioralCloning\\data\\'
     
+    #with open('C:\\Users\\ahmed\\OneDrive\\CarND\\behavioral_cloning\\driving_log.csv') as csvFile:
     with open(folder + 'driving_log.csv') as csvFile:
         reader = csv.reader(csvFile)
         for line in reader:
@@ -89,6 +115,7 @@ def loadData(training_size):
     return filenames, measurements
 
 def lenet(reset_mode=True):
+    #K.tf.Session(config=K.tf.ConfigProto(log_device_placement=True))
     model = None
     
     if(reset_model):
@@ -118,10 +145,10 @@ def train(training_size, reset_model=True):
     X, y = loadData(training_size)
     model = lenet(reset_model)
     
-    for i in range(0,2):
+    for i in range(0,1):
         X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=np.random.randint(0, 100))
-        trainingGenerator = ImageBatchSequence(X_train, y_train, 100, shuffle=True, generator_name="train")
-        validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, shuffle=True, generator_name="validate" )
+        trainingGenerator = ImageBatchSequence(X_train, y_train, 100, generator_name="train")
+        validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, generator_name="validate" )
     
         model.fit_generator(
             generator=trainingGenerator,
@@ -136,6 +163,7 @@ def train(training_size, reset_model=True):
 
 reset_model = True
 
+#images, measurements = loadImages()
 #training_sizes = [250, 500, 750, 1000, 1250, 1500, 1750, 2000]
 training_sizes = [2000] #, 4000, 6000, 8000, 10000]
 augmented_training_sizes = []
