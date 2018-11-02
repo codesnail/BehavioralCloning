@@ -319,7 +319,7 @@ trainingGenerator = ImageBatchSequence(X_train, y_train, 100, shuffle=True, gene
 validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, shuffle=True, generator_name="validate" )
 ```
 
-Finally, I replace model.fit() with model.fit_generator() to use the generator:
+Finally, I replace `model.fit()` with `model.fit_generator()` to use the generator:
 
 ```
 model.fit_generator(
@@ -329,8 +329,9 @@ model.fit_generator(
             epochs=2
         )
 ```
+The parameter `shuffle=True` makes the framework send different batch numbers to the getitem method, ensuring we get training data in different order across epochs. Shuffling the training data across epochs is a best practice in supervised learning. It basically helps speed up convergence.
 
-The entire train() method now looks like the following. Notice that I do the train/test split and call fit_generator() inside a loop so as to ensure I can train and validate on different data.
+The entire `train()` method now looks like the following. Notice that I do the train/test split and call `fit_generator()` inside a loop so as to ensure I can train and validate on different data. This way we can implement cross-validation with generators.
 
 ```
 def train(training_size, reset_model=True):
