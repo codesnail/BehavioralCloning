@@ -150,7 +150,7 @@ This is followed by a max pooling layer that uses a 2x2 kernel, default stride o
 | Fully connected       | Input 120, output 84                          |  10k               |
 |	Relu  	              |	Induce non-linearity                          |                    |
 | Fully connected       | Input 84, output 1                            |  84                |
-| Total Weights         |                                               |  *7.19M*           |
+| Total Weights         |                                               |  *7.15M*           |
 
 The original Lenet output layer has 26 nodes, which was replaced with a single linear output node since this is a regression problem and we want a steering angle as output.
 
