@@ -239,16 +239,6 @@ It can be seen that the growth is linear, so Big O for this network is O(n). For
 
 For this experiment, a g2.2xlarge instance was provisioned on AWS cloud, with 1 NVIDIA Kepler GK104 Grid GPU plus 8 vCPUs and 15 GB RAM. The average training runtime on GPU was 0.12 sec per MB, compared to 1.4 sec per MB for quad-core. This is a 91.4% improvement in runtime! To understand the scale of difference on big data, with 1TB of data it will take 1.45 days on GPU vs 17 days on quad-core to train the model.
 
-For training this model on the cloud, I had to generate and upload an 81MB zip file of my training images data. This data size is small enough to be feasible for multipe iterations of fresh data collection, upload and training. But for big data (on the order of GBs or TBs), this could be a significant challenge.
-
-Many popular development environments are still not optimized for cloud development. You generally need 2-3 parallel channels for this type of environment. 
-
-1. A channel for transferring files back and forth from your server or storage in the cloud, e.g. in this case uploading my training data, and downloading my trained model.
-1. A channel for running your program on the cloud, e.g. in this case my training program, model.py.
-1. Optionally, a separate channel for quick edits to your code and checking into your repository directly from cloud. For bigger changes, you are probably better off editing your changes in your local repository, committing them and downloading on your cloud instance.
-
-I find it useful to open 3 separate shells for this purpose. Two connected to my cloud instance, and one for my local file system (for uploading and downloading files). In an ideal cloud IDE, these functions would be provided by the File or Project Explorer pane, the Code Editor pane, and the Output pane.
-
 #### Performance Impact of Removing or adding layers
 
 In this experiment, I note the runtime performance by removing the fully connected layer only, then again by removing the convolutional layer only. This experiment was run on quad-core CPUs.
@@ -354,6 +344,19 @@ def train(training_size, reset_model=True):
         
         model.save('model3.h5')
 ```
+### Development Environment for Machine Learning in the Cloud
+
+The driving simulator that generates training data runs locally on my Windows machine. For training the model on the cloud, I had to generate and upload a zip file of about 81MB for my training images. This data size is small enough to be feasible for multipe iterations of fresh data collection, upload and training. But for big data (on the order of GBs or TBs), this could be a significant challenge.
+
+Many popular development environments are still not optimized for cloud development. You generally need 2-3 parallel channels for this type of environment. 
+
+1. A channel for transferring files back and forth from your server or storage in the cloud, e.g. in this case uploading my training data, and downloading my trained model.
+1. A channel for running your program on the cloud, e.g. in this case my training program, model.py.
+1. Optionally, a separate channel for quick edits to your code and checking into your repository directly from cloud. For bigger changes, you are probably better off editing your changes in your local repository, committing them and downloading on your cloud instance.
+
+I find it useful to open 3 separate shells for this purpose. Two connected to my cloud instance, and one for my local file system (for uploading and downloading files). In an ideal cloud IDE, these functions would be provided by the File or Project Explorer pane, the Code Editor pane, and the Output pane.
+
+---
 
 #### Files Submitted
 
