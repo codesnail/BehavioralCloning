@@ -261,6 +261,50 @@ In this experiment, I note the runtime performance by removing the fully connect
 
 Although the fully connected layer introduces many more weights, it has a lower impact on the runtime performance of the architecture. Interestingly, the removal of the 1st convolutional layer of 6 channels has a bigger impact on performance. Firsly, it maybe a bit cryptic to see on the surface, but removal of a smaller layer of 6 channels means now we are directly connecting the input to a bigger channel of 16. So the total weights go from 71x296x6 = 126k to 71x296x*16* = 336k, which is more than the combined weights of the original 1st and second layer (126k + 71.4k = 197.4). Secondly, although the convolutional layer introduces fewer *weights* than the fully connected layer, the kernel still has to be convolved over the entire image, which is a costly operation. We are convolving 5x5x16 cells for each of the 71x296 cells. So the total operations are 5x5x6x71x296 = 3.1M. This is still about half of the number of operations for the first fully connected layer. The other aspects to consider to explain this would be whether tensorflow vectorizes convolutions, and the overhead of calculating backprop for convolutional layers. An in-depth analysis of these aspects is beyond the scope of this report.
 
+#### Generators and Optimizing Memory Usage
+
+Another resource we want to keep an eye on, specially when dealing with big data, is memory. Generally in training neural networks, we divide all the data into several smaller batches, and feed one batch at a time. This batching is handled by model.fit() in Keras. However, so far we have still loaded all the data into memory at the same time. This is not possible when we have huge amounts of data. The way to handle this is the generator framework. We could use a plain python generator, but in this case I will implement the keras.util.Sequence class. It provides some nice capabilities for multiprocessing and parallelism. The file `model3.py` contains the relevant code. First we define the generator class:
+
+```
+class ImageBatchSequence(Sequence):
+
+    def __init__(self, x_set, y_set, batch_size, shuffle=False, generator_name='train'):
+        #print("__init__", shuffle, " - ", generator_name)
+        self.x, self.y = x_set, y_set
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.indexes = np.arange(len(self.x))
+        self.generator_name = generator_name
+    
+    def on_epoch_end(self):
+        'Updates indexes after each epoch'
+        #print("on_epoch_end(): ", self.generator_name)
+        self.indexes = np.arange(len(self.x))
+        if self.shuffle == True:
+            np.random.shuffle(self.indexes)
+    
+    def __len__(self):
+        #print("called __len__(): ", self.generator_name)
+        return int(np.ceil(len(self.x) / float(self.batch_size)))
+
+    def __getitem__(self, idx):
+        # Generate indexes of the batch
+        indexes = self.indexes[idx*self.batch_size:(idx+1)*self.batch_size]
+        images = [mpimg.imread(self.x[ind]) for ind in indexes]
+        batch_y = [self.y[ind] for ind in indexes]
+               
+        for i in range(self.batch_size):
+            image_flipped = np.fliplr(images[i])
+            measurement_flipped = -batch_y[i]
+            images.append(image_flipped)
+            batch_y.append(measurement_flipped)
+        
+        return np.array(images), np.array(batch_y)
+```
+The minimum requirement is to implement __len__() and __getitem__(). Here I also added the on_epoch_end() method. Basically, this will enable us to randomly shuffle the data for each training epoch. It mainly helps reaching the optimal weights faster.
+
+Next, I instantiate 2 generators, one for training and another for validation:
+
 #### Files Submitted
 
 The project includes the following files:
