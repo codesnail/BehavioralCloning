@@ -145,7 +145,7 @@ This is followed by a max pooling layer that uses a 2x2 kernel, default stride o
 | Max pooling	      	  | 2x2 stride,  outputs 15x72x16  	            	|                    |
 | Fully connected		    | Input=17280, output 400		                   	|  6.9M              |
 | RELU                  | Induce non-linearity                          |                    |
-| Fully connected       | Input 400, output 120                         |  80k               |
+| Fully connected       | Input 400, output 120                         |  48k               |
 | RELU                  | Induce non-linearity                          |                    |
 | Fully connected       | Input 120, output 84                          |  10k               |
 |	Relu  	              |	Induce non-linearity                          |                    |
