@@ -33,40 +33,9 @@ class ImageBatchSequence(Sequence):
         self.indexes = np.arange(len(self.x))
         self.generator_name = generator_name
     
-    '''
-    def on_epoch_end(self):
-        'Updates indexes after each epoch'
-        #print("on_epoch_end(): ", self.generator_name)
-        self.indexes = np.arange(len(self.x))
-        if self.shuffle == True:
-            np.random.shuffle(self.indexes)
-    '''
-    
     def __len__(self):
         #print("called __len__(): ", self.generator_name)
         return int(np.ceil(len(self.x) / float(self.batch_size)))
-
-    def __getitem2__(self, idx):
-        # Generate indexes of the batch
-        #print("__getitem__(): idx*batch_size, (idx+1)*batch_size = ", idx*self.batch_size, (idx+1)*self.batch_size)
-        indexes = self.indexes[idx*self.batch_size:(idx+1)*self.batch_size]
-        images = [mpimg.imread(self.x[ind]) for ind in indexes]
-        batch_y = [self.y[ind] for ind in indexes]
-        
-        #print("__getitem__: stage 4")
-        
-        if(idx==0):
-            #print("batch_x[0] = ", batch_x[0], " - ", self.generator_name)
-            print("indexes[0] = ", indexes[0], " - ", self.generator_name)
-        
-        for i in range(self.batch_size):
-            image_flipped = np.fliplr(images[i])
-            measurement_flipped = -batch_y[i]
-            images.append(image_flipped)
-            batch_y.append(measurement_flipped)
-        
-        #print("__getitem__: stage 3")
-        return np.array(images), np.array(batch_y)
     
     def __getitem__(self, idx):
         # Generate indexes of the batch
