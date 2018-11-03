@@ -288,7 +288,7 @@ class ImageBatchSequence(Sequence):
         return np.array(images), np.array(batch_y)
 ```
 
-The minimum requirement is to implement __len__() and __getitem__(). You could also add on_epoch_start() or on_epoch_end() if you want to do something on those life-cycle events.
+The minimum requirement is to implement `len()` and `getitem()`. You could also add `on_epoch_start()` or `on_epoch_end()` to do something in those life-cycle events.
 
 Next, I just load the file names of my training data, and the labels. We could even modify this part to be in the generator if we really need to, but in this case it takes up a small amount of memory to load filenames and labels, and I already have the boilder plate for this so it was an easier refactoring to do it this way.
 
@@ -305,8 +305,8 @@ X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, rando
 Next, I instantiate 2 generators, for training and validation:
 
 ```
-trainingGenerator = ImageBatchSequence(X_train, y_train, 100, shuffle=True, generator_name="train")
-validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, shuffle=True, generator_name="validate" )
+trainingGenerator = ImageBatchSequence(X_train, y_train, 100, generator_name="train")
+validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, generator_name="validate" )
 ```
 
 Finally, I replace `model.fit()` with `model.fit_generator()` to use the generator:
@@ -330,8 +330,8 @@ def train(training_size, reset_model=True):
     
     for i in range(0,2):
         X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=np.random.randint(0, 100))
-        trainingGenerator = ImageBatchSequence(X_train, y_train, 100, shuffle=True, generator_name="train")
-        validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, shuffle=True, generator_name="validate" )
+        trainingGenerator = ImageBatchSequence(X_train, y_train, 100, generator_name="train")
+        validationGenerator = ImageBatchSequence(X_valid, y_valid, 40, generator_name="validate" )
     
         model.fit_generator(
             generator=trainingGenerator,
@@ -348,7 +348,7 @@ def train(training_size, reset_model=True):
 
 The driving simulator that generates training data runs locally on my Windows machine. For training the model on the cloud, I had to generate and upload a zip file of about 81MB for my training images. This data size is small enough to be feasible for multipe iterations of fresh data collection, upload and training. But for big data (on the order of GBs or TBs), this could be a significant challenge.
 
-Many popular development environments are still not optimized for cloud development. You generally need 2-3 parallel channels for this type of environment. 
+Many popular development environments are still not optimized for cloud development. You generally need 2-3 parallel channels to the server for this type of environment. 
 
 1. A channel for transferring files back and forth from your server or storage in the cloud, e.g. in this case uploading my training data, and downloading my trained model.
 1. A channel for running your program on the cloud, e.g. in this case my training program, model.py.
