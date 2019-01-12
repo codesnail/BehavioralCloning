@@ -36,7 +36,7 @@ The pipeline consists of the following steps:
 * [Training Strategy, Tuning and Results](#training-strategy-tuning-and-results)
   * [Handling Overfitting](#handling-overfitting)
   * [Model Parameter Tuning](#model-parameter-tuning)
-* [Simulation](#simulation)
+* [Simulation (Autonmous Driving)](#simulation)
 * [Performance](#performance)
   * [Performance on GPU on AWS](#performance-on-gpu-on-amazon-cloud)
   * [Performance Impact of Removing and Adding Layers](#performance-impact-of-removing-or-adding-layers)
@@ -58,7 +58,9 @@ The training mode is like a video game in which you drive a car on a track, usin
 
 [Training Video](./videos/sample_training_video.mp4)
 
-The simulator actually stores the video in the form of individual images it is comprised of. It also outputs `driving_log.csv` which records the steering angle against the corresponding fully qualified image file name. Below is a sample of this file after running the simulator in training mode.
+(Compare this to the autonomous driving mode [here](./videos/run2_autonomous.mp4), but read below to see how I got there.)
+
+The simulator actually stores the training video in the form of individual images it is comprised of. It also outputs `driving_log.csv` which records the steering angle against the corresponding fully qualified image file name. Below is a sample of this file after running the simulator in training mode.
 
 ```
 C:\ahmed\CarND\behavioral_cloning\IMG\center_2018_07_30_19_54_48_078.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\left_2018_07_30_19_54_48_078.jpg,C:\ahmed\CarND\behavioral_cloning\IMG\right_2018_07_30_19_54_48_078.jpg,0,0,0,9.254003E-07
